@@ -1,0 +1,36 @@
+package com.example.cineverse
+
+import androidx.compose.ui.graphics.Color
+
+// Generated from Figma color variables
+
+val ColorsBackgroundScreen = Color(0xFF121321)
+val ColorsShadePrimary = Color(0xFFE1E1E3)
+val ColorsBackgroundCard = Color(0xFF1B1C2A)
+val ColorsBrandPrimary = Color(0xFF8C9EFF)
+val ColorsButtonPrimary = Color(0xFF8C9EFF)
+val ColorsButtonSecondary = Color(0xFF24263B)
+val ColorsBrandSecondary = Color(0xFF464D7B)
+val ColorsBrandTertiary = Color(0xFF24263B)
+val ColorsBackgroundBottomSheet = Color(0xFF1B1C2A)
+val ColorsBackgroundBottomSheetCard = Color(0xFF242533)
+val ColorsButtonDisabled = Color(0xFF242533)
+val ColorsButtonOnPrimary = Color(0xFF1B1C2A)
+val ColorsButtonOnSecondary = Color(0xFFE1E1E3)
+val ColorsButtonOnTertiary = Color(0xFF8C9EFF)
+val ColorsButtonOnDisabled = Color(0xFF72727B)
+val ColorsStrokePrimary = Color(0xFF24263B)
+val ColorsAdditionalPrimaryRed = Color(0xFFFF6B6B)
+val ColorsAdditionalSecondaryRed = Color(0xFF2C202D)
+val ColorsAdditionalSecondaryGreeen = Color(0xFF232A31)
+val ColorsAdditionalSecondaryYellow = Color(0xFF2D2927)
+val ColorsAdditionalSecondaryShimmer = Color(0x14FFFFFF)
+val ColorsAdditionalPrimaryGreen = Color(0xFF00E676)
+val ColorsAdditionalPrimaryYellow = Color(0xFFFFD600)
+val ColorsOverlayPrimary = Color(0x99121321)
+val ColorsOverlaySeconadry = Color(0x3D121321)
+val ColorsAdditionalTEMP = Color(0x99FFFFFF)
+val ColorsShadeSecondary = Color(0xFFA4A4AA)
+val ColorsShadeTertiary = Color(0xFF72727B)
+val ColorsShadeQuaternary = Color(0xFF2D2E3B)
+val ColorsShadeQuinary = Color(0xFF242533)
