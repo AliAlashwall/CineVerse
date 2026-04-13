@@ -1,4 +1,4 @@
-package com.example.cineverse
+package com.example.cineverse.ui.new_theme
 
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
