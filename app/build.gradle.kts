@@ -57,6 +57,18 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
+    //ktor
+    implementation(libs.ktor.client.core)       // ktor core client
+    implementation(libs.ktor.client.cio)   // ktor CIO engine
+    implementation(libs.ktor.client.android)   // ktor Android engine
+    implementation(libs.ktor.client.content.negotiation)   // ktor content
+    implementation(libs.ktor.serialization.kotlinx.json) // ktor kotlinx-json serialization
+    implementation(libs.ktor.serialization.gson)  // Ktor Gson support
+    implementation(libs.gson)   //Gson it self
+    implementation(libs.ktor.client.auth) // Auth plugin
+    implementation(libs.androidx.security.crypto) // For secure token storage
+
+
     //Navigation
 //    implementation(libs.androidx.navigation.compose)
     implementation(libs.navigation.compose)
