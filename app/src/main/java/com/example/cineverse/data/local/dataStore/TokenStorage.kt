@@ -1,4 +1,4 @@
-package com.example.cineverse.util
+package com.example.cineverse.data.local.dataStore
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit
@@ -19,8 +19,11 @@ class TokenStorage(context: Context) {
 
     companion object {
         val ACCESS_TOKEN = stringPreferencesKey("access_token")
-        val EXPIRY_DAY = stringPreferencesKey("expiry_day")
+        val ACCESS_TOKEN_EXPIRY_DAY = stringPreferencesKey("access_token_expiry_day")
+
         val SESSION_ID = stringPreferencesKey("Session_id")
+
+        val SESSION_EXPIRY_DAY = stringPreferencesKey("session_expiry_day")
     }
 
     // Expose as Flow for reactive UI
@@ -36,6 +39,9 @@ class TokenStorage(context: Context) {
     suspend fun getAccessToken(): String? =
         dataStore.data.map { it[ACCESS_TOKEN] }.firstOrNull()
 
+    suspend fun getAccessTokenExpiryDay(): String? =
+        dataStore.data.map { it[ACCESS_TOKEN_EXPIRY_DAY] }.firstOrNull()
+
 
     suspend fun isTokenExpired(): Boolean {
         //TODO
@@ -44,11 +50,19 @@ class TokenStorage(context: Context) {
 
     suspend fun saveAccessToken(
         accessToken: String,
-        expiryDay: String
+        tokenExpiryDay: String
     ) {
         dataStore.edit { prefs ->
             prefs[ACCESS_TOKEN] = accessToken
-            prefs[EXPIRY_DAY] = expiryDay
+            prefs[ACCESS_TOKEN_EXPIRY_DAY] = tokenExpiryDay
+        }
+    }
+
+    suspend fun saveSessionData(
+        sessionExpiryDay: String
+    ) {
+        dataStore.edit { prefs ->
+            prefs[SESSION_EXPIRY_DAY] = sessionExpiryDay
         }
     }
 
