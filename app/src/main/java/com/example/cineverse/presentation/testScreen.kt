@@ -22,14 +22,13 @@ import com.example.cineverse.domain.model.RequestTokenResponseDTO
 
 @Composable
 fun TestScreen(viewModel: KtorViewModel) {
-
-    LaunchedEffect(Unit) {
-        viewModel.getTokenProcess()
-    }
     val tokenResponseState by viewModel.tokenResponse.collectAsStateWithLifecycle()
 
     val authUiState by viewModel.authUiState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(key1 = Unit) {
+            viewModel.getTokenProcess()
+    }
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         when (tokenResponseState) {
             is UiState.Loading -> {
@@ -65,6 +64,13 @@ fun TestScreen(viewModel: KtorViewModel) {
                         * */
                     }) {
                         Text("Login with TMDB")
+                    }
+
+
+                    Button(onClick = {
+                        viewModel.login("po2378", "po2378", context)
+                    }) {
+                        Text("Login")
                     }
                 }
             }

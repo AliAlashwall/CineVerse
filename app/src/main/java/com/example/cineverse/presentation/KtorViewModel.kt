@@ -1,6 +1,9 @@
 package com.example.cineverse.presentation
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cineverse.domain.model.RequestTokenResponseDTO
@@ -24,6 +27,7 @@ sealed class UiState<out T> {
 }
 
 @HiltViewModel
+@SuppressLint("StaticFieldLeak")
 class KtorViewModel @Inject constructor(
     private val client: HttpClient,
     private val tokenStorage: TokenStorage,
@@ -37,6 +41,20 @@ class KtorViewModel @Inject constructor(
 
     private val _authUiState = MutableStateFlow(AuthUiState())
     val authUiState: StateFlow<AuthUiState> = _authUiState
+
+    init {
+        //To avoid getting new access token every time we create this view model
+        viewModelScope.launch {
+            val savedAccessToken = tokenStorage.getAccessToken()
+            if (savedAccessToken != null) {
+                _authUiState.update {
+                    it.copy(
+                        accessToken = savedAccessToken,
+                    )
+                }
+            }
+        }
+    }
 
     fun getTokenProcess() {
 
@@ -68,18 +86,34 @@ class KtorViewModel @Inject constructor(
         }
     }
 
-    fun login(username: String, password: String) {
+    fun login(username: String, password: String, context: Context) {
         val accessToken = authUiState.value.accessToken
-        try {
+        if (accessToken != null) {
             viewModelScope.launch(Dispatchers.IO) {
-                val loginResponse =
-                    authRepository.login(client, username, password, accessToken ?: "")
-                if (loginResponse.success) {
-                    tokenStorage.saveSessionData(sessionExpiryDay = loginResponse.expiresAt)
+                try {
+                    val loginResponse =
+                        authRepository.login(client, username, password, accessToken)
+                    if (loginResponse.success) {
+                        tokenStorage.saveSessionData(sessionExpiryDay = loginResponse.expiresAt)
+                    }
+                    Log.d("Ktor", "Login Response: $loginResponse")
+                } catch (e: Exception) {
+                    Log.e("Ktor", "Error during login", e)
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            context,
+                            "Login failed: ${e.localizedMessage}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
             }
-        } catch (e: Exception) {
-            Log.e("Ktor", "Error accessing access token", e)
+        } else {
+            Toast.makeText(
+                context,
+                "Access token is null. Please fetch the token first.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 }
