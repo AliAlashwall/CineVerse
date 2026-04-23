@@ -3,19 +3,17 @@ package com.example.cineverse
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cineverse.model.QuestionsListDto
+import com.example.cineverse.domain.Repository
+import com.example.cineverse.domain.model.RequestTokenResponseDTO
+import com.example.cineverse.unit.TokenStorage
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.engine.android.Android
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.request.get
-import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.Json
+import javax.inject.Inject
 
 
 sealed class UiState<out T> {
@@ -24,36 +22,38 @@ sealed class UiState<out T> {
     data class Error(val message: String) : UiState<Nothing>()
 }
 
-class KtorViewModel : ViewModel() {
+@HiltViewModel
+class KtorViewModel @Inject constructor(
+    private val client: HttpClient,
+    private val tokenStorage: TokenStorage,
+    private val repository: Repository
+) : ViewModel() {
 
-    private val _questions = MutableStateFlow<UiState<QuestionsListDto>>(UiState.Loading)
-    val questions: StateFlow<UiState<QuestionsListDto>> = _questions
+    private val _tokenResponse =
+        MutableStateFlow<UiState<RequestTokenResponseDTO>>(UiState.Loading)
+    val tokenResponse: StateFlow<UiState<RequestTokenResponseDTO>> = _tokenResponse
 
-    val client = HttpClient(Android) {
-        install(ContentNegotiation) {
-            json(Json {
-                ignoreUnknownKeys = true
-            })
-        }
-    }
+    fun getTokenProcess() {
 
-
-
-     fun loadQuestions() {
         viewModelScope.launch {
             Log.d("Ktor", "Starting fetch...")
             try {
-                val result = withContext(Dispatchers.IO) { fetchQuestions() }
-                Log.d("Ktor", "Finished fetch: $result items")
-                _questions.value = UiState.Success(result)
+                val result = withContext(Dispatchers.IO) { repository.fetchRequestToken(client) }
+
+                // Save the tokens to storage!
+                if (result.success) {
+                    tokenStorage.saveAccessToken(
+                        accessToken = result.requestToken,
+                        expiryDay = result.expiresAt
+                    )
+                }
+                Log.d("Ktor", "Access Token= ${tokenStorage.getAccessToken()}")
+
+                _tokenResponse.value = UiState.Success(result)
             } catch (e: Exception) {
                 Log.e("Ktor", "Error", e)
-                _questions.value = UiState.Error(e.localizedMessage ?: "Unknown error")
+                _tokenResponse.value = UiState.Error(e.localizedMessage ?: "Unknown error")
             }
         }
-    }
-
-    suspend fun fetchQuestions(): QuestionsListDto {
-        return client.get("https://opentdb.com/api.php?amount=1").body()
     }
 }

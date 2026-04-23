@@ -1,0 +1,15 @@
+package com.example.cineverse.domain.model
+
+
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class RequestTokenResponseDTO(
+    @SerialName("expires_at")
+    val expiresAt: String,
+    @SerialName("request_token")
+    val requestToken: String,
+    @SerialName("success")
+    val success: Boolean
+)

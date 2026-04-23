@@ -1,0 +1,5 @@
+package com.example.cineverse.unit
+
+object Constants {
+    const val API_KEY = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiOTY2ZjI1NWM1YmFkODk2NDY5ZmI1NzM2ZmI1ZDJhNCIsIm5iZiI6MTcyOTk4OTIzNS42OTYsInN1YiI6IjY3MWQ4YTczMjY4NWNiNjU2M2MxMGFkOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.aeGdR7xdJe2hA3WDIylrR5cb9JY5-re3zW6VSXp2uqI"
+}
