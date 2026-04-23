@@ -17,5 +17,13 @@ class AppModule {
     @Singleton
     fun provideTokenStorage(@ApplicationContext context: Context): TokenStorage =
         TokenStorage(context = context)
+
+
+    @Provides
+    @Singleton
+    suspend fun provideTokenApprovement(tokenStorage : TokenStorage): String {
+        val accessToken = tokenStorage.getAccessToken()
+        return "https://www.themoviedb.org/authenticate/{$accessToken}"
+    }
 }
 
