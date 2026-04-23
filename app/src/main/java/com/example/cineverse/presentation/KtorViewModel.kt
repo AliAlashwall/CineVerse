@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cineverse.domain.model.RequestTokenResponseDTO
-import com.example.cineverse.domain.repository.Repository
-import com.example.cineverse.util.TokenStorage
+import com.example.cineverse.domain.repository.AuthRepository
+import com.example.cineverse.data.local.dataStore.TokenStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +27,7 @@ sealed class UiState<out T> {
 class KtorViewModel @Inject constructor(
     private val client: HttpClient,
     private val tokenStorage: TokenStorage,
-    private val repository: Repository
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _tokenResponse =
@@ -43,18 +43,18 @@ class KtorViewModel @Inject constructor(
         viewModelScope.launch {
             Log.d("Ktor", "Starting fetch...")
             try {
-                val result = withContext(Dispatchers.IO) { repository.fetchRequestToken(client) }
+                val result =
+                    withContext(Dispatchers.IO) { authRepository.fetchRequestToken(client) }
 
                 // Save the tokens to storage!
                 if (result.success) {
                     tokenStorage.saveAccessToken(
                         accessToken = result.requestToken,
-                        expiryDay = result.expiresAt
+                        tokenExpiryDay = result.expiresAt
                     )
                     _authUiState.update {
                         it.copy(
                             accessToken = result.requestToken,
-                            expiryDay = result.expiresAt
                         )
                     }
                 }
@@ -65,6 +65,21 @@ class KtorViewModel @Inject constructor(
                 Log.e("Ktor", "Error", e)
                 _tokenResponse.value = UiState.Error(e.localizedMessage ?: "Unknown error")
             }
+        }
+    }
+
+    fun login(username: String, password: String) {
+        val accessToken = authUiState.value.accessToken
+        try {
+            viewModelScope.launch(Dispatchers.IO) {
+                val loginResponse =
+                    authRepository.login(client, username, password, accessToken ?: "")
+                if (loginResponse.success) {
+                    tokenStorage.saveSessionData(sessionExpiryDay = loginResponse.expiresAt)
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("Ktor", "Error accessing access token", e)
         }
     }
 }

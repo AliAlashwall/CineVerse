@@ -1,7 +1,7 @@
 package com.example.cineverse.di
 
-import com.example.cineverse.data.remote.repository.RepositoryImpl
-import com.example.cineverse.domain.repository.Repository
+import com.example.cineverse.data.remote.repository.AuthRepositoryImpl
+import com.example.cineverse.domain.repository.AuthRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,8 +13,7 @@ import javax.inject.Singleton
 class RepositoryModule {
     @Provides
     @Singleton
-    fun provideRepository(impl: RepositoryImpl): Repository {
+    fun provideAuthRepository(impl: AuthRepositoryImpl): AuthRepository {
         return impl
     }
-
 }
