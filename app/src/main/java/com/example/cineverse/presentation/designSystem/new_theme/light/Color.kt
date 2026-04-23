@@ -1,4 +1,4 @@
-package com.example.cineverse.ui.new_theme.light
+package com.example.cineverse.presentation.designSystem.new_theme.light
 
 import androidx.compose.ui.graphics.Color
 

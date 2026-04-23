@@ -1,6 +1,6 @@
 package com.example.cineverse.di
 
-import com.example.cineverse.createHttpClient
+import com.example.cineverse.data.remote.createHttpClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

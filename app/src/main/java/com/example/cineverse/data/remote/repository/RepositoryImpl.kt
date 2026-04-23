@@ -1,6 +1,6 @@
-package com.example.cineverse.data
+package com.example.cineverse.data.remote.repository
 
-import com.example.cineverse.domain.Repository
+import com.example.cineverse.domain.repository.Repository
 import com.example.cineverse.domain.model.RequestTokenResponseDTO
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

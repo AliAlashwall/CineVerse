@@ -1,6 +1,6 @@
-package com.example.cineverse
+package com.example.cineverse.data.remote
 
-import com.example.cineverse.unit.Constants
+import com.example.cineverse.util.Constants
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.HttpRequestRetry

@@ -1,7 +1,7 @@
 package com.example.cineverse.di
 
-import com.example.cineverse.data.RepositoryImpl
-import com.example.cineverse.domain.Repository
+import com.example.cineverse.data.remote.repository.RepositoryImpl
+import com.example.cineverse.domain.repository.Repository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,4 +1,4 @@
-package com.example.cineverse.unit
+package com.example.cineverse.util
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit

@@ -12,7 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.cineverse.ui.theme.CineVerseTheme
+import com.example.cineverse.presentation.KtorViewModel
+import com.example.cineverse.presentation.TestScreen
+import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

@@ -1,7 +1,7 @@
 package com.example.cineverse.di
 
 import android.content.Context
-import com.example.cineverse.unit.TokenStorage
+import com.example.cineverse.util.TokenStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

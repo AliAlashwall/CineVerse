@@ -1,4 +1,4 @@
-package com.example.cineverse.domain
+package com.example.cineverse.domain.repository
 
 import com.example.cineverse.domain.model.RequestTokenResponseDTO
 import io.ktor.client.HttpClient

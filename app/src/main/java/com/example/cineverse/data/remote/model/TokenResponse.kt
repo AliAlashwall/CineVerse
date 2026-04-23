@@ -1,4 +1,4 @@
-package com.example.cineverse.data.model
+package com.example.cineverse.data.remote.model
 
 
 data class TokenResponse(

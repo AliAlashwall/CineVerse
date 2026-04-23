@@ -1,11 +1,11 @@
-package com.example.cineverse
+package com.example.cineverse.presentation
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cineverse.domain.Repository
+import com.example.cineverse.domain.repository.Repository
 import com.example.cineverse.domain.model.RequestTokenResponseDTO
-import com.example.cineverse.unit.TokenStorage
+import com.example.cineverse.util.TokenStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.Dispatchers
