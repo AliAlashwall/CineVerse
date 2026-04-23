@@ -11,9 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.cineverse.ui.theme.CineVerseTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,8 +24,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             CineVerseTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) {  innerPadding ->
-                    val ktorViewModel: KtorViewModel = viewModel()
-                    QuestionsScreen(ktorViewModel)
+                    val ktorViewModel: KtorViewModel = hiltViewModel()
+                    TestScreen(ktorViewModel)
                 }
             }
         }
