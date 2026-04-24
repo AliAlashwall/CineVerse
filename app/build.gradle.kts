@@ -54,6 +54,8 @@ dependencies {
 
     //Hilt
     implementation(libs.hilt.android)
+    implementation(libs.androidx.browser)
+    implementation(libs.androidx.material3)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
@@ -84,7 +86,6 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
-//    implementation(libs.androidx.navigation.compose) // Corrected from navigation.runtime.ktx
 
     implementation(libs.coil.compose)
 

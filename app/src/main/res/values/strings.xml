@@ -223,5 +223,6 @@
     <string name="tap_a_movie_to_see_details_or_update_your_rating">Tap a movie to see details or update your rating.</string>
     <string name="link_not_available">Link not available</string>
     <string name="reset_your_password">Reset Your Password</string>
+    <string name="forgot_password">Forgot Password?</string>
     <string name="forget_password_description">We’ll take you to the website so you can securely update your password.</string>
 </resources>
