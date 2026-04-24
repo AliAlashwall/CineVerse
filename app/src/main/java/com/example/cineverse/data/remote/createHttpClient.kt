@@ -60,5 +60,8 @@ fun createHttpClient(): HttpClient {
 
         // ── Response validation ────────────────────────────────────────
         expectSuccess = true  // throws exceptions for 4xx/5xx
+
+        // Logging Interceptor
+
     }
 }

@@ -9,7 +9,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,58 +25,65 @@ fun TestScreen(viewModel: KtorViewModel) {
 
     val authUiState by viewModel.authUiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(key1 = Unit) {
-            viewModel.getTokenProcess()
-    }
+//    LaunchedEffect(key1 = Unit) {
+//            viewModel.getTokenProcess()
+//    }
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        when (tokenResponseState) {
-            is UiState.Loading -> {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    CircularProgressIndicator()
-                    Text("Fetching data from API...") // Added text to confirm it's alive
-                }
-            }
-
-            is UiState.Success -> {
-                val data = (tokenResponseState as UiState.Success<RequestTokenResponseDTO>).data
-
-                Column() {
-                    Text("success: ${data.success}", modifier = Modifier.padding(8.dp))
-
-                    Text("requestToken: ${data.requestToken}", modifier = Modifier.padding(8.dp))
-
-                    Text("expiresAt: ${data.expiresAt}", modifier = Modifier.padding(8.dp))
-
-                    val context = LocalContext.current
-
-                    Button(onClick = {
-                        val url =
-                            "https://www.themoviedb.org/authenticate/${authUiState.accessToken}?redirect_to=myapp://approved"
-
-
-                        val intent = Intent(Intent.ACTION_VIEW, url.toUri())
-                        context.startActivity(intent)
-
-                        /*
-                        val customTabsIntent = CustomTabsIntent.Builder().build()
-                        customTabsIntent.launchUrl(context, Uri.parse(url))
-                        * */
-                    }) {
-                        Text("Login with TMDB")
-                    }
-
-
-                    Button(onClick = {
-                        viewModel.login("po2378", "po2378", context)
-                    }) {
-                        Text("Login")
+        Column(horizontalAlignment = Alignment.CenterHorizontally){
+            when (tokenResponseState) {
+                is UiState.Loading -> {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        CircularProgressIndicator()
+                        Text("Fetching data from API...") // Added text to confirm it's alive
                     }
                 }
-            }
 
-            is UiState.Error -> {
-                val message = (tokenResponseState as UiState.Error).message
-                Text("Error: $message", color = Color.Red)
+                is UiState.Success -> {
+                    val data = (tokenResponseState as UiState.Success<RequestTokenResponseDTO>).data
+
+                    Column() {
+                        Text("success: ${data.success}", modifier = Modifier.padding(8.dp))
+
+                        Text(
+                            "requestToken: ${data.requestToken}",
+                            modifier = Modifier.padding(8.dp)
+                        )
+
+                        Text("expiresAt: ${data.expiresAt}", modifier = Modifier.padding(8.dp))
+
+                        val context = LocalContext.current
+
+                        Button(onClick = {
+                            val url =
+                                "https://www.themoviedb.org/authenticate/${authUiState.accessToken}?redirect_to=myapp://approved"
+
+
+                            val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+                            context.startActivity(intent)
+
+                            /*
+                            val customTabsIntent = CustomTabsIntent.Builder().build()
+                            customTabsIntent.launchUrl(context, Uri.parse(url))
+                            * */
+                        }) {
+                            Text("Login with TMDB")
+                        }
+
+
+                    }
+                }
+
+                is UiState.Error -> {
+                    val message = (tokenResponseState as UiState.Error).message
+                    Text("Error: $message", color = Color.Red)
+                }
+
+
+            }
+            Button(onClick = {
+                viewModel.login("po2378", "po2378")
+            }) {
+                Text("Login")
             }
         }
     }

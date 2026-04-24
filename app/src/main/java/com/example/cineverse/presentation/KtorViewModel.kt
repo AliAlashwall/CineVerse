@@ -1,14 +1,12 @@
 package com.example.cineverse.presentation
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cineverse.data.local.dataStore.TokenStorage
 import com.example.cineverse.domain.model.RequestTokenResponseDTO
 import com.example.cineverse.domain.repository.AuthRepository
-import com.example.cineverse.data.local.dataStore.TokenStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.Dispatchers
@@ -56,64 +54,53 @@ class KtorViewModel @Inject constructor(
         }
     }
 
-    fun getTokenProcess() {
+    suspend fun getTokenProcess(): String? {
 
-        viewModelScope.launch {
-            Log.d("Ktor", "Starting fetch...")
-            try {
-                val result =
-                    withContext(Dispatchers.IO) { authRepository.fetchRequestToken(client) }
+        Log.d("Ktor", "Starting fetch...")
+        return try {
+            val result =
+                withContext(Dispatchers.IO) { authRepository.fetchRequestToken(client) }
 
-                // Save the tokens to storage!
-                if (result.success) {
-                    tokenStorage.saveAccessToken(
+            // Save the tokens to storage!
+            if (result.success) {
+                tokenStorage.saveAccessToken(
+                    accessToken = result.requestToken,
+                    tokenExpiryDay = result.expiresAt
+                )
+                _authUiState.update {
+                    it.copy(
                         accessToken = result.requestToken,
-                        tokenExpiryDay = result.expiresAt
                     )
-                    _authUiState.update {
-                        it.copy(
-                            accessToken = result.requestToken,
-                        )
-                    }
                 }
-                Log.d("Ktor", "Access Token= ${tokenStorage.getAccessToken()}")
-
-                _tokenResponse.value = UiState.Success(result)
-            } catch (e: Exception) {
-                Log.e("Ktor", "Error", e)
-                _tokenResponse.value = UiState.Error(e.localizedMessage ?: "Unknown error")
             }
+            Log.d("Ktor", "Access Token= ${tokenStorage.getAccessToken()}")
+
+            _tokenResponse.value = UiState.Success(result)
+            result.requestToken
+        } catch (e: Exception) {
+            Log.e("Ktor", "Error", e)
+            _tokenResponse.value = UiState.Error(e.localizedMessage ?: "Unknown error")
+            return null
         }
+
     }
 
-    fun login(username: String, password: String, context: Context) {
-        val accessToken = authUiState.value.accessToken
-        if (accessToken != null) {
-            viewModelScope.launch(Dispatchers.IO) {
+    fun login(username: String, password: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val accessToken = getTokenProcess()
+            if (accessToken != null) {
                 try {
                     val loginResponse =
                         authRepository.login(client, username, password, accessToken)
                     if (loginResponse.success) {
                         tokenStorage.saveSessionData(sessionExpiryDay = loginResponse.expiresAt)
+                        Log.d("Ktor", "Login Response: $loginResponse")
                     }
-                    Log.d("Ktor", "Login Response: $loginResponse")
+
                 } catch (e: Exception) {
                     Log.e("Ktor", "Error during login", e)
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(
-                            context,
-                            "Login failed: ${e.localizedMessage}",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
                 }
             }
-        } else {
-            Toast.makeText(
-                context,
-                "Access token is null. Please fetch the token first.",
-                Toast.LENGTH_SHORT
-            ).show()
         }
     }
 }
