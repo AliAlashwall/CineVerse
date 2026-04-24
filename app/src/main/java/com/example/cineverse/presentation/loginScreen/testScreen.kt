@@ -1,4 +1,4 @@
-package com.example.cineverse.presentation
+package com.example.cineverse.presentation.loginScreen
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Box

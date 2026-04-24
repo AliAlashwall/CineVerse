@@ -1,4 +1,4 @@
-package com.example.cineverse.presentation
+package com.example.cineverse.presentation.loginScreen
 
 
 data class AuthUiState(
