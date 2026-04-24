@@ -26,7 +26,7 @@ sealed class UiState<out T> {
 
 @HiltViewModel
 @SuppressLint("StaticFieldLeak")
-class KtorViewModel @Inject constructor(
+class LoginViewModel @Inject constructor(
     private val client: HttpClient,
     private val tokenStorage: TokenStorage,
     private val authRepository: AuthRepository
@@ -37,15 +37,15 @@ class KtorViewModel @Inject constructor(
     val tokenResponse: StateFlow<UiState<RequestTokenResponseDTO>> = _tokenResponse
 
 
-    private val _authUiState = MutableStateFlow(AuthUiState())
-    val authUiState: StateFlow<AuthUiState> = _authUiState
+    private val _loginUiState = MutableStateFlow(LoginUiState())
+    val loginUiState: StateFlow<LoginUiState> = _loginUiState
 
     init {
         //To avoid getting new access token every time we create this view model
         viewModelScope.launch {
             val savedAccessToken = tokenStorage.getAccessToken()
             if (savedAccessToken != null) {
-                _authUiState.update {
+                _loginUiState.update {
                     it.copy(
                         accessToken = savedAccessToken,
                     )
@@ -67,7 +67,7 @@ class KtorViewModel @Inject constructor(
                     accessToken = result.requestToken,
                     tokenExpiryDay = result.expiresAt
                 )
-                _authUiState.update {
+                _loginUiState.update {
                     it.copy(
                         accessToken = result.requestToken,
                     )
@@ -85,13 +85,18 @@ class KtorViewModel @Inject constructor(
 
     }
 
-    fun login(username: String, password: String) {
+    fun login() {
         viewModelScope.launch(Dispatchers.IO) {
             val accessToken = getTokenProcess()
             if (accessToken != null) {
                 try {
                     val loginResponse =
-                        authRepository.login(client, username, password, accessToken)
+                        authRepository.login(
+                            client = client,
+                            username = _loginUiState.value.username,
+                            password = _loginUiState.value.password,
+                            accessToken
+                        )
                     if (loginResponse.success) {
                         tokenStorage.saveSessionData(sessionExpiryDay = loginResponse.expiresAt)
                         Log.d("Ktor", "Login Response: $loginResponse")
@@ -102,5 +107,59 @@ class KtorViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun joinAsGuest() {
+        //TODO
+    }
+
+    fun signUp() {
+        //TODO
+    }
+
+    fun resetPassword() {
+        //TODO
+    }
+
+    fun onShowResetPSBottomSheet() {
+        _loginUiState.update {
+            it.copy(
+                showResetPSBottomSheet = true
+            )
+        }
+    }
+
+    fun onShowSignUpBottomSheet() {
+        _loginUiState.update {
+            it.copy(
+                showSignUpBottomSheet = true
+            )
+        }
+    }
+
+    fun onDismissBottomSheet() {
+        _loginUiState.update {
+            it.copy(
+                showResetPSBottomSheet = false,
+                showSignUpBottomSheet = false,
+            )
+        }
+    }
+
+    fun onUsernameChanged(username: String) {
+        _loginUiState.update {
+            it.copy(
+                username = username
+            )
+        }
+    }
+
+    fun onPasswordChanged(password: String) {
+        _loginUiState.update {
+            it.copy(
+                password = password
+            )
+        }
+
     }
 }

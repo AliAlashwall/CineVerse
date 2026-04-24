@@ -15,8 +15,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -41,10 +43,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cineverse.R
+import com.example.cineverse.presentation.components.CineVerseBottomSheet
 import com.example.cineverse.presentation.components.CustomButton
 import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
 import com.example.cineverse.presentation.designSystem.theme.Theme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     loginViewModel: LoginViewModel,
@@ -59,23 +63,55 @@ fun LoginScreen(
         onPasswordChanged = { loginViewModel.onPasswordChanged(it) },
         password = loginUiState.password,
         onLoginClicked = { loginViewModel.login() },
-        onLoginAsGuestClicked = { loginViewModel.joinAsGuest() }
-
+        onLoginAsGuestClicked = { loginViewModel.joinAsGuest() },
+        onShowResetBottomSheet = { loginViewModel.onShowResetPSBottomSheet() },
+        onShowSignUpBottomSheet = { loginViewModel.onShowSignUpBottomSheet() },
     )
+
+    if (loginUiState.showResetPSBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { loginViewModel.onDismissBottomSheet() },
+            containerColor = Theme.colors.backgroundScreen,
+            modifier = Modifier.padding(horizontal = 12.dp)
+        ) {
+            CineVerseBottomSheet(
+                mainText = stringResource(R.string.reset_your_password),
+                secondaryText = stringResource(R.string.forget_password_description),
+                onCancelClicked = { loginViewModel.onDismissBottomSheet() },
+                onPrimaryButtonClicked = { loginViewModel.resetPassword() }
+            )
+        }
+    }
+
+    if (loginUiState.showSignUpBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { loginViewModel.onDismissBottomSheet() },
+            containerColor = Theme.colors.backgroundScreen,
+            modifier = Modifier.padding(horizontal = 12.dp)
+        ) {
+            CineVerseBottomSheet(
+                mainText = stringResource(R.string.join_cineverse),
+                secondaryText = stringResource(R.string.let_s_get_you_set_up_we_ll_take_you_to_the_website_to_create_your_account),
+                onCancelClicked = { loginViewModel.onDismissBottomSheet() },
+                onPrimaryButtonClicked = { loginViewModel.signUp() }
+            )
+        }
+    }
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreenContainer(
     modifier: Modifier = Modifier,
     username: String = "",
     password: String = "",
-    onUsernameChanged: (String) -> Unit = {},
-    onPasswordChanged: (String) -> Unit = {},
-    onLoginClicked: () -> Unit = {},
-    onLoginAsGuestClicked: () -> Unit = {},
-    onForgotPasswordClicked: () -> Unit = {},
-    onCreateNewAccountClicked: () -> Unit = {},
+    onUsernameChanged: (String) -> Unit,
+    onPasswordChanged: (String) -> Unit,
+    onLoginClicked: () -> Unit,
+    onLoginAsGuestClicked: () -> Unit,
+    onShowResetBottomSheet: () -> Unit,
+    onShowSignUpBottomSheet: () -> Unit,
 ) {
     val passwordHiddenVisibility = rememberSaveable { mutableStateOf(false) }
     val passwordFocusRequester = remember { FocusRequester() }
@@ -96,7 +132,7 @@ fun LoginScreenContainer(
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(64.dp))
+        Spacer(modifier = Modifier.height(80.dp))
         Image(
             painterResource(R.drawable.cine_verse_logo),
             contentDescription = stringResource(R.string.cine_verse_logo),
@@ -226,7 +262,7 @@ fun LoginScreenContainer(
                 text = stringResource(R.string.forgot_password),
                 color = Theme.colors.shadeSecondary,
                 style = Theme.textStyle.bodyMdRegular,
-                modifier = Modifier.clickable { onForgotPasswordClicked() },
+                modifier = Modifier.clickable { onShowResetBottomSheet() }
             )
         }
         Spacer(Modifier.height(20.dp))
@@ -243,14 +279,15 @@ fun LoginScreenContainer(
             text = stringResource(R.string.join_as_guest),
         )
 
-        Spacer(Modifier.height(96.dp))
+        Spacer(Modifier.weight(1f))
 
         CustomButton(
-            onClicked = { onCreateNewAccountClicked() },
+            onClicked = { onShowSignUpBottomSheet() },
             text = stringResource(R.string.create_a_new_account),
             modifier = Modifier.size(170.dp, 40.dp),
             textStyle = Theme.textStyle.bodySmMedium
         )
+        Spacer(Modifier.height(32.dp))
     }
 }
 
@@ -259,7 +296,15 @@ fun LoginScreenContainer(
 @Composable
 private fun LoginScreenPreview() {
     CineVerseTheme {
-
-        LoginScreenContainer()
+        LoginScreenContainer(
+            username = "",
+            password = "",
+            onUsernameChanged = { },
+            onPasswordChanged = { },
+            onLoginClicked = { },
+            onLoginAsGuestClicked = { },
+            onShowResetBottomSheet = { },
+            onShowSignUpBottomSheet = { },
+        )
     }
 }

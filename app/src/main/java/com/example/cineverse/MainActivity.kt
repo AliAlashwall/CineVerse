@@ -6,15 +6,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.cineverse.presentation.loginScreen.KtorViewModel
-import com.example.cineverse.presentation.loginScreen.TestScreen
 import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
+import com.example.cineverse.presentation.loginScreen.LoginScreen
+import com.example.cineverse.presentation.loginScreen.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -25,27 +23,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CineVerseTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) {  innerPadding ->
-                    val ktorViewModel: KtorViewModel = hiltViewModel()
-                    TestScreen(ktorViewModel)
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    val loginViewModel: LoginViewModel = hiltViewModel()
+                    LoginScreen(
+                        loginViewModel = loginViewModel,
+                        modifier = Modifier.padding(innerPadding)
+                    )
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    CineVerseTheme {
-        Greeting("Android")
     }
 }
