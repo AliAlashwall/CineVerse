@@ -29,10 +29,10 @@ import com.example.cineverse.presentation.designSystem.theme.Theme
 
 @Composable
 fun CineVerseBottomSheet(
+    modifier: Modifier = Modifier,
     mainText: String,
     secondaryText: String,
-    primaryButtonText: String,
-    modifier: Modifier = Modifier,
+    primaryButtonText: String = stringResource(R.string.go_to_website),
     onCancelClicked: () -> Unit = {},
     onPrimaryButtonClicked: () -> Unit = {},
 ) {
@@ -81,7 +81,9 @@ fun CineVerseBottomSheet(
         ) {
             Button(
                 onClick = { onCancelClicked() },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .height(48.dp),
                 colors = ButtonDefaults.buttonColors(Theme.colors.buttonSecondary),
                 shape = RoundedCornerShape(16.dp)
             ) {
@@ -96,7 +98,9 @@ fun CineVerseBottomSheet(
 
             Button(
                 onClick = { onPrimaryButtonClicked() },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .height(48.dp),
                 colors = ButtonDefaults.buttonColors(Theme.colors.buttonPrimary),
                 shape = RoundedCornerShape(16.dp)
             ) {

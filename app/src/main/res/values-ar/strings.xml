@@ -225,5 +225,6 @@
     <string name="link_not_available">اللينك غير متوفر</string>
     <string name="reset_your_password">إعادة تعيين كلمة المرور</string>
     <string name="forget_password_description">نسيت كلمة المرور</string>
+    <string name="forgot_password">نسيت كلمة المرور؟</string>
 
 </resources>
