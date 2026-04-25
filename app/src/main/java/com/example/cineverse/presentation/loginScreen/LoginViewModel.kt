@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cineverse.data.local.dataStore.TokenStorage
-import com.example.cineverse.data.remote.model.LoginResponseDTO
+import com.example.cineverse.domain.model.LoginResponse
 import com.example.cineverse.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.HttpClient
@@ -36,8 +36,8 @@ class LoginViewModel @Inject constructor(
     private val _authUiState = MutableStateFlow(LoginUiState())
     val authUiState: StateFlow<LoginUiState> = _authUiState
 
-    private val _loginResponse = MutableStateFlow<Result<LoginResponseDTO>>(Result.Empty)
-    val loginResponse: StateFlow<Result<LoginResponseDTO>> = _loginResponse
+    private val _loginResponse = MutableStateFlow<Result<LoginResponse>>(Result.Empty)
+    val loginResponse: StateFlow<Result<LoginResponse>> = _loginResponse
 
 
     init {
