@@ -1,9 +1,12 @@
 package com.example.cineverse.presentation.loginScreen
 
+import android.widget.Toast
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,6 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -41,8 +46,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cineverse.R
+import com.example.cineverse.presentation.components.AnimatedLoading
 import com.example.cineverse.presentation.components.CineVerseBottomSheet
 import com.example.cineverse.presentation.components.CustomButton
 import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
@@ -54,21 +61,55 @@ fun LoginScreen(
     loginViewModel: LoginViewModel,
     modifier: Modifier = Modifier
 ) {
-    val loginUiState by loginViewModel.loginUiState.collectAsStateWithLifecycle()
+    val authUiState by loginViewModel.authUiState.collectAsStateWithLifecycle()
 
-    LoginScreenContainer(
-        modifier = modifier,
-        username = loginUiState.username,
-        onUsernameChanged = { loginViewModel.onUsernameChanged(it) },
-        onPasswordChanged = { loginViewModel.onPasswordChanged(it) },
-        password = loginUiState.password,
-        onLoginClicked = { loginViewModel.login() },
-        onLoginAsGuestClicked = { loginViewModel.joinAsGuest() },
-        onShowResetBottomSheet = { loginViewModel.onShowResetPSBottomSheet() },
-        onShowSignUpBottomSheet = { loginViewModel.onShowSignUpBottomSheet() },
-    )
+    val loginResponseUiState by loginViewModel.loginResponse.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
-    if (loginUiState.showResetPSBottomSheet) {
+
+    Box {
+        LoginScreenContainer(
+            modifier = modifier,
+            username = authUiState.username,
+            onUsernameChanged = { loginViewModel.onUsernameChanged(it) },
+            onPasswordChanged = { loginViewModel.onPasswordChanged(it) },
+            password = authUiState.password,
+            onLoginClicked = { loginViewModel.login() },
+            onLoginAsGuestClicked = { loginViewModel.joinAsGuest() },
+            onShowResetBottomSheet = { loginViewModel.onShowResetPSBottomSheet() },
+            onShowSignUpBottomSheet = { loginViewModel.onShowSignUpBottomSheet() },
+        )
+        when (loginResponseUiState) {
+            is Result.Loading -> {
+                Box(Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f)),
+                    contentAlignment = Alignment.Center) {
+                    AnimatedLoading(
+                        modifier = Modifier.size(80.dp),
+                        tintColor = Theme.colors.shadePrimary,
+                    )
+                }
+            }
+
+            is Result.Success -> {
+                //navigate to home
+            }
+
+            is Result.Error -> {
+                Toast.makeText(
+                    context,
+                    (loginResponseUiState as Result.Error).message,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+
+            is Result.Empty -> {}
+        }
+
+    }
+
+    if (authUiState.showResetPSBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { loginViewModel.onDismissBottomSheet() },
             containerColor = Theme.colors.backgroundScreen,
@@ -78,12 +119,18 @@ fun LoginScreen(
                 mainText = stringResource(R.string.reset_your_password),
                 secondaryText = stringResource(R.string.forget_password_description),
                 onCancelClicked = { loginViewModel.onDismissBottomSheet() },
-                onPrimaryButtonClicked = { loginViewModel.resetPassword() }
+                onPrimaryButtonClicked = {
+                    val url = "https://www.themoviedb.org/reset-password?language=it-VA"
+
+                    val customTabsIntent = CustomTabsIntent.Builder().build()
+                    customTabsIntent.launchUrl(context, url.toUri())
+                    loginViewModel.onDismissBottomSheet()
+                }
             )
         }
     }
 
-    if (loginUiState.showSignUpBottomSheet) {
+    if (authUiState.showSignUpBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { loginViewModel.onDismissBottomSheet() },
             containerColor = Theme.colors.backgroundScreen,
@@ -93,11 +140,16 @@ fun LoginScreen(
                 mainText = stringResource(R.string.join_cineverse),
                 secondaryText = stringResource(R.string.let_s_get_you_set_up_we_ll_take_you_to_the_website_to_create_your_account),
                 onCancelClicked = { loginViewModel.onDismissBottomSheet() },
-                onPrimaryButtonClicked = { loginViewModel.signUp() }
+                onPrimaryButtonClicked = {
+                    val url = "https://www.themoviedb.org/signup"
+
+                    val customTabsIntent = CustomTabsIntent.Builder().build()
+                    customTabsIntent.launchUrl(context, url.toUri())
+                    loginViewModel.onDismissBottomSheet()
+                }
             )
         }
     }
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -167,7 +219,7 @@ fun LoginScreenContainer(
             keyboardActions = KeyboardActions(
                 onNext = { passwordFocusRequester.requestFocus() }
             ),
-            label = {
+            placeholder = {
                 Text(
                     text = stringResource(R.string.enter_your_email_or_username),
                     style = Theme.textStyle.bodyMdRegular,
@@ -201,7 +253,7 @@ fun LoginScreenContainer(
         TextField(
             value = password,
             onValueChange = { onPasswordChanged(it) },
-            label = {
+            placeholder = {
                 Text(
                     text = stringResource(R.string.enter_your_password),
                     style = Theme.textStyle.bodyMdRegular,

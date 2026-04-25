@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cineverse.data.local.dataStore.TokenStorage
-import com.example.cineverse.domain.model.RequestTokenResponseDTO
+import com.example.cineverse.domain.model.LoginResponseDTO
 import com.example.cineverse.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.HttpClient
@@ -18,10 +18,11 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
-sealed class UiState<out T> {
-    object Loading : UiState<Nothing>()
-    data class Success<T>(val data: T) : UiState<T>()
-    data class Error(val message: String) : UiState<Nothing>()
+sealed class Result<out T> {
+    object Loading : Result<Nothing>()
+    object Empty : Result<Nothing>()
+    data class Success<T>(val data: T) : Result<T>()
+    data class Error(val message: String) : Result<Nothing>()
 }
 
 @HiltViewModel
@@ -32,20 +33,19 @@ class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
-    private val _tokenResponse =
-        MutableStateFlow<UiState<RequestTokenResponseDTO>>(UiState.Loading)
-    val tokenResponse: StateFlow<UiState<RequestTokenResponseDTO>> = _tokenResponse
+    private val _authUiState = MutableStateFlow(LoginUiState())
+    val authUiState: StateFlow<LoginUiState> = _authUiState
 
+    private val _loginResponse = MutableStateFlow<Result<LoginResponseDTO>>(Result.Empty)
+    val loginResponse: StateFlow<Result<LoginResponseDTO>> = _loginResponse
 
-    private val _loginUiState = MutableStateFlow(LoginUiState())
-    val loginUiState: StateFlow<LoginUiState> = _loginUiState
 
     init {
         //To avoid getting new access token every time we create this view model
         viewModelScope.launch {
             val savedAccessToken = tokenStorage.getAccessToken()
             if (savedAccessToken != null) {
-                _loginUiState.update {
+                _authUiState.update {
                     it.copy(
                         accessToken = savedAccessToken,
                     )
@@ -54,75 +54,66 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    suspend fun getTokenProcess(): String? {
+    private suspend fun getTokenProcess(): String? {
 
         Log.d("Ktor", "Starting fetch...")
-        return try {
-            val result =
-                withContext(Dispatchers.IO) { authRepository.fetchRequestToken(client) }
 
-            // Save the tokens to storage!
-            if (result.success) {
-                tokenStorage.saveAccessToken(
-                    accessToken = result.requestToken,
-                    tokenExpiryDay = result.expiresAt
+        val requestTokenResponse =
+            withContext(Dispatchers.IO) { authRepository.fetchRequestToken(client) }
+
+        // Save the tokens to storage!
+        if (requestTokenResponse is Result.Success) {
+            tokenStorage.saveAccessToken(
+                accessToken = requestTokenResponse.data.requestToken,
+                tokenExpiryDay = requestTokenResponse.data.expiresAt
+            )
+            _authUiState.update {
+                it.copy(
+                    accessToken = requestTokenResponse.data.requestToken,
                 )
-                _loginUiState.update {
-                    it.copy(
-                        accessToken = result.requestToken,
-                    )
-                }
             }
             Log.d("Ktor", "Access Token= ${tokenStorage.getAccessToken()}")
 
-            _tokenResponse.value = UiState.Success(result)
-            result.requestToken
-        } catch (e: Exception) {
-            Log.e("Ktor", "Error", e)
-            _tokenResponse.value = UiState.Error(e.localizedMessage ?: "Unknown error")
-            return null
-        }
-
+            return requestTokenResponse.data.requestToken
+        } else return null
     }
 
     fun login() {
         viewModelScope.launch(Dispatchers.IO) {
+            _loginResponse.value = Result.Loading
             val accessToken = getTokenProcess()
             if (accessToken != null) {
-                try {
-                    val loginResponse =
-                        authRepository.login(
-                            client = client,
-                            username = _loginUiState.value.username,
-                            password = _loginUiState.value.password,
-                            accessToken
-                        )
-                    if (loginResponse.success) {
-                        tokenStorage.saveSessionData(sessionExpiryDay = loginResponse.expiresAt)
-                        Log.d("Ktor", "Login Response: $loginResponse")
-                    }
-
-                } catch (e: Exception) {
-                    Log.e("Ktor", "Error during login", e)
-                }
+                _loginResponse.value = authRepository.login(
+                    client = client,
+                    username = _authUiState.value.username,
+                    password = _authUiState.value.password,
+                    requestToken = accessToken
+                )
+                Log.d("Ktor", "Login Response: ${_loginResponse.value}")
+            } else {
+                // 4. Handle case where token fetching failed
+                _loginResponse.value = Result.Error("Failed to fetch request token")
             }
         }
     }
 
     fun joinAsGuest() {
-        //TODO
-    }
+        viewModelScope.launch(Dispatchers.IO) {
+            val guestSessionResponse = authRepository.joinAsGuest(client)
+            Log.d("Ktor", "Guest Session Response: $guestSessionResponse")
 
-    fun signUp() {
-        //TODO
-    }
-
-    fun resetPassword() {
-        //TODO
+            if (guestSessionResponse is Result.Success) {
+                _authUiState.update {
+                    it.copy(
+                        guestSessionId = guestSessionResponse.data.guestSessionId
+                    )
+                }
+            }
+        }
     }
 
     fun onShowResetPSBottomSheet() {
-        _loginUiState.update {
+        _authUiState.update {
             it.copy(
                 showResetPSBottomSheet = true
             )
@@ -130,7 +121,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun onShowSignUpBottomSheet() {
-        _loginUiState.update {
+        _authUiState.update {
             it.copy(
                 showSignUpBottomSheet = true
             )
@@ -138,7 +129,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun onDismissBottomSheet() {
-        _loginUiState.update {
+        _authUiState.update {
             it.copy(
                 showResetPSBottomSheet = false,
                 showSignUpBottomSheet = false,
@@ -147,7 +138,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun onUsernameChanged(username: String) {
-        _loginUiState.update {
+        _authUiState.update {
             it.copy(
                 username = username
             )
@@ -155,7 +146,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun onPasswordChanged(password: String) {
-        _loginUiState.update {
+        _authUiState.update {
             it.copy(
                 password = password
             )
