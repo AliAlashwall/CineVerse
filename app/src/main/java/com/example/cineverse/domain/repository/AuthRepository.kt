@@ -1,8 +1,8 @@
 package com.example.cineverse.domain.repository
 
-import com.example.cineverse.domain.model.GuestSessionResponseDTO
-import com.example.cineverse.domain.model.LoginResponseDTO
-import com.example.cineverse.domain.model.RequestTokenResponseDTO
+import com.example.cineverse.data.remote.model.GuestSessionResponseDTO
+import com.example.cineverse.data.remote.model.LoginResponseDTO
+import com.example.cineverse.data.remote.model.RequestTokenResponseDTO
 import com.example.cineverse.presentation.loginScreen.Result
 import io.ktor.client.HttpClient
 

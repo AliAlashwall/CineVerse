@@ -1,11 +1,11 @@
-package com.example.cineverse.domain.model
+package com.example.cineverse.data.remote.model
 
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class LoginResponseDTO(
+data class RequestTokenResponseDTO(
     @SerialName("expires_at")
     val expiresAt: String,
     @SerialName("request_token")

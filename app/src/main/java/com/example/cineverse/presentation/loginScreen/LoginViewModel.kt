@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cineverse.data.local.dataStore.TokenStorage
-import com.example.cineverse.domain.model.LoginResponseDTO
+import com.example.cineverse.data.remote.model.LoginResponseDTO
 import com.example.cineverse.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.HttpClient
