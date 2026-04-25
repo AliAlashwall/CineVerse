@@ -1,4 +1,4 @@
-package com.example.cineverse
+package com.example.cineverse.presentation
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -10,8 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.rememberNavController
+import com.example.cineverse.navigation.AppNavHost
 import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
-import com.example.cineverse.presentation.loginScreen.LoginScreen
 import com.example.cineverse.presentation.loginScreen.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -23,11 +24,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CineVerseTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(modifier = Modifier.Companion.fillMaxSize()) { innerPadding ->
                     val loginViewModel: LoginViewModel = hiltViewModel()
-                    LoginScreen(
-                        loginViewModel = loginViewModel,
-                        modifier = Modifier.padding(innerPadding)
+                    val navController = rememberNavController()
+                    AppNavHost(
+                        navController = navController,
+                        modifier = Modifier.padding(innerPadding),
+                        loginViewModel = loginViewModel
                     )
                 }
             }
