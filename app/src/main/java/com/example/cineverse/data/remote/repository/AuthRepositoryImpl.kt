@@ -1,10 +1,14 @@
 package com.example.cineverse.data.remote.repository
 
+import com.example.cineverse.data.remote.mapper.toDomain
 import com.example.cineverse.data.remote.model.GuestSessionResponseDTO
 import com.example.cineverse.data.remote.model.LoginRequest
 import com.example.cineverse.data.remote.model.LoginResponseDTO
 import com.example.cineverse.domain.repository.AuthRepository
 import com.example.cineverse.data.remote.model.RequestTokenResponseDTO
+import com.example.cineverse.domain.model.GuestSessionResponse
+import com.example.cineverse.domain.model.LoginResponse
+import com.example.cineverse.domain.model.TokenResponse
 import com.example.cineverse.presentation.loginScreen.Result
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -16,10 +20,10 @@ import io.ktor.http.contentType
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor() : AuthRepository {
-    override suspend fun fetchRequestToken(client: HttpClient): Result<RequestTokenResponseDTO> {
+    override suspend fun fetchRequestToken(client: HttpClient): Result<TokenResponse> {
         return try {
             val response = client.get("authentication/token/new").body<RequestTokenResponseDTO>()
-            Result.Success(response)
+            Result.Success(response.toDomain())
         } catch (e: Exception) {
             Result.Error(e.localizedMessage ?: "An error occurred")
         }
@@ -30,23 +34,23 @@ class AuthRepositoryImpl @Inject constructor() : AuthRepository {
         username: String,
         password: String,
         requestToken: String
-    ): Result<LoginResponseDTO> {
+    ): Result<LoginResponse> {
         return try {
             val loginRequest = LoginRequest(username, password, requestToken)
             val response = client.post("authentication/token/validate_with_login") {
                 contentType(ContentType.Application.Json)
                 setBody(loginRequest)
             }.body<LoginResponseDTO>()
-            Result.Success(response)
+            Result.Success(response.toDomain())
         } catch (e: Exception) {
             Result.Error(e.localizedMessage ?: "An error occurred")
         }
     }
 
-    override suspend fun joinAsGuest(client: HttpClient): Result<GuestSessionResponseDTO> {
+    override suspend fun joinAsGuest(client: HttpClient): Result<GuestSessionResponse> {
         return try {
             val response = client.get("authentication/guest_session/new").body<GuestSessionResponseDTO>()
-            Result.Success(response)
+            Result.Success(response.toDomain())
         } catch (e: Exception) {
             Result.Error(e.localizedMessage ?: "An error occurred")
         }

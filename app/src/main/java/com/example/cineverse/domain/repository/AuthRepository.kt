@@ -1,21 +1,21 @@
 package com.example.cineverse.domain.repository
 
-import com.example.cineverse.data.remote.model.GuestSessionResponseDTO
-import com.example.cineverse.data.remote.model.LoginResponseDTO
-import com.example.cineverse.data.remote.model.RequestTokenResponseDTO
+import com.example.cineverse.domain.model.GuestSessionResponse
+import com.example.cineverse.domain.model.LoginResponse
+import com.example.cineverse.domain.model.TokenResponse
 import com.example.cineverse.presentation.loginScreen.Result
 import io.ktor.client.HttpClient
 
 interface AuthRepository {
-    suspend fun fetchRequestToken(client: HttpClient): Result<RequestTokenResponseDTO>
+    suspend fun fetchRequestToken(client: HttpClient): Result<TokenResponse>
 
 
     suspend fun login(
         client: HttpClient, username: String,
         password: String,
         requestToken: String
-    ): Result<LoginResponseDTO>
+    ): Result<LoginResponse>
 
-    suspend fun joinAsGuest(client: HttpClient): Result<GuestSessionResponseDTO>
+    suspend fun joinAsGuest(client: HttpClient): Result<GuestSessionResponse>
 
 }
