@@ -1,15 +1,15 @@
-package com.example.cineverse.data.remote.model
+package com.example.cineverse.data.remote.dto
 
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RequestTokenResponseDTO(
+data class GuestSessionResponseDTO(
     @SerialName("expires_at")
     val expiresAt: String,
-    @SerialName("request_token")
-    val requestToken: String,
+    @SerialName("guest_session_id")
+    val guestSessionId: String,
     @SerialName("success")
     val success: Boolean
 )

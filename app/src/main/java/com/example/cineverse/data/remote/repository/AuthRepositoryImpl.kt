@@ -1,11 +1,11 @@
 package com.example.cineverse.data.remote.repository
 
 import com.example.cineverse.data.remote.mapper.toDomain
-import com.example.cineverse.data.remote.model.GuestSessionResponseDTO
-import com.example.cineverse.data.remote.model.LoginRequest
-import com.example.cineverse.data.remote.model.LoginResponseDTO
+import com.example.cineverse.data.remote.dto.GuestSessionResponseDTO
+import com.example.cineverse.data.remote.dto.LoginRequest
+import com.example.cineverse.data.remote.dto.LoginResponseDTO
 import com.example.cineverse.domain.repository.AuthRepository
-import com.example.cineverse.data.remote.model.RequestTokenResponseDTO
+import com.example.cineverse.data.remote.dto.RequestTokenResponseDTO
 import com.example.cineverse.domain.model.GuestSessionResponse
 import com.example.cineverse.domain.model.LoginResponse
 import com.example.cineverse.domain.model.TokenResponse

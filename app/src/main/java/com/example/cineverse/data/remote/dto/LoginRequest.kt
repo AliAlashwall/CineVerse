@@ -1,4 +1,4 @@
-package com.example.cineverse.data.remote.model
+package com.example.cineverse.data.remote.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
