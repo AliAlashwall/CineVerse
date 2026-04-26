@@ -13,7 +13,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.cineverse.navigation.AppNavHost
 import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
-import com.example.cineverse.presentation.loginScreen.LoginViewModel
+import com.example.cineverse.presentation.screens.loginScreen.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CineVerseTheme {
-                Scaffold(modifier = Modifier.Companion.fillMaxSize()) { innerPadding ->
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val loginViewModel: LoginViewModel = hiltViewModel()
                     val navController = rememberNavController()
                     AppNavHost(

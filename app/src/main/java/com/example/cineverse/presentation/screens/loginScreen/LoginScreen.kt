@@ -1,4 +1,4 @@
-package com.example.cineverse.presentation.loginScreen
+package com.example.cineverse.presentation.screens.loginScreen
 
 import android.widget.Toast
 import androidx.browser.customtabs.CustomTabsIntent

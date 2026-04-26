@@ -3,6 +3,7 @@ package com.example.cineverse.presentation.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -85,7 +86,8 @@ fun CineVerseBottomSheet(
                     .weight(1f)
                     .height(48.dp),
                 colors = ButtonDefaults.buttonColors(Theme.colors.buttonSecondary),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(16.dp),
+                contentPadding = PaddingValues(0.dp),
             ) {
                 Text(
                     text = stringResource(R.string.cancel),
@@ -102,7 +104,8 @@ fun CineVerseBottomSheet(
                     .weight(1f)
                     .height(48.dp),
                 colors = ButtonDefaults.buttonColors(Theme.colors.buttonPrimary),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(16.dp),
+                contentPadding = PaddingValues(0.dp),
             ) {
                 Text(
                     text = primaryButtonText,

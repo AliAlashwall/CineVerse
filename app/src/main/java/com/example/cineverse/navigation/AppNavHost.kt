@@ -5,9 +5,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.cineverse.presentation.homeScreen.HomeScreen
-import com.example.cineverse.presentation.loginScreen.LoginScreen
-import com.example.cineverse.presentation.loginScreen.LoginViewModel
+import com.example.cineverse.presentation.screens.homeScreen.HomeScreen
+import com.example.cineverse.presentation.screens.loginScreen.LoginScreen
+import com.example.cineverse.presentation.screens.loginScreen.LoginViewModel
+import com.example.cineverse.presentation.screens.onBoardingScreen.OnBoardingScreen
 
 @Composable
 fun AppNavHost(
@@ -18,11 +19,15 @@ fun AppNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = LoginScreen,
+        startDestination = OnBoardingScreen,
         modifier = modifier
     ) {
         composable<OnBoardingScreen> {
-
+            OnBoardingScreen(
+                onGetStartedClicked = {
+                    navController.navigate(LoginScreen)
+                }
+            )
         }
 
         composable<LoginScreen> {

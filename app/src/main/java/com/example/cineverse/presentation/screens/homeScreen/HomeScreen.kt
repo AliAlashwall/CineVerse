@@ -1,4 +1,4 @@
-package com.example.cineverse.presentation.homeScreen
+package com.example.cineverse.presentation.screens.homeScreen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text

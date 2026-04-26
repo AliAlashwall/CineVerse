@@ -225,4 +225,7 @@
     <string name="reset_your_password">Reset Your Password</string>
     <string name="forgot_password">Forgot Password?</string>
     <string name="forget_password_description">We’ll take you to the website so you can securely update your password.</string>
+    <string name="on_boarding_1_image" translatable="false">On Boarding 1 Image</string>
+    <string name="back_arrow" translatable="false">back</string>
+    <string name="forward_arrow">next\n</string>
 </resources>

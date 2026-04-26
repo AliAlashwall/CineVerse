@@ -9,7 +9,7 @@ import com.example.cineverse.data.remote.dto.RequestTokenResponseDTO
 import com.example.cineverse.domain.model.GuestSessionResponse
 import com.example.cineverse.domain.model.LoginResponse
 import com.example.cineverse.domain.model.TokenResponse
-import com.example.cineverse.presentation.loginScreen.Result
+import com.example.cineverse.presentation.screens.loginScreen.Result
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
