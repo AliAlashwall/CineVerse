@@ -1,7 +1,7 @@
 package com.example.cineverse.di
 
 import android.content.Context
-import com.example.cineverse.data.local.dataStore.TokenStorage
+import com.example.cineverse.data.local.dataStore.AuthStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,14 +15,14 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideTokenStorage(@ApplicationContext context: Context): TokenStorage =
-        TokenStorage(context = context)
+    fun provideTokenStorage(@ApplicationContext context: Context): AuthStorage =
+        AuthStorage(context = context)
 
 
     @Provides
     @Singleton
-    suspend fun provideTokenApprovement(tokenStorage : TokenStorage): String {
-        val accessToken = tokenStorage.getAccessToken()
+    suspend fun provideTokenApprovement(authStorage : AuthStorage): String {
+        val accessToken = authStorage.getAccessToken()
         return "https://www.themoviedb.org/authenticate/{$accessToken}"
     }
 }

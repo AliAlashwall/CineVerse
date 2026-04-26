@@ -11,6 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
+import com.example.CineVerseViewModel
 import com.example.cineverse.navigation.AppNavHost
 import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
 import com.example.cineverse.presentation.screens.loginScreen.LoginViewModel
@@ -23,14 +24,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val loginViewModel: LoginViewModel = hiltViewModel()
+            val cineVerseViewModel: CineVerseViewModel = hiltViewModel()
+            val navController = rememberNavController()
+
             CineVerseTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val loginViewModel: LoginViewModel = hiltViewModel()
-                    val navController = rememberNavController()
                     AppNavHost(
                         navController = navController,
                         modifier = Modifier.padding(innerPadding),
-                        loginViewModel = loginViewModel
+                        loginViewModel = loginViewModel,
+                        cineVerseViewModel = cineVerseViewModel
                     )
                 }
             }

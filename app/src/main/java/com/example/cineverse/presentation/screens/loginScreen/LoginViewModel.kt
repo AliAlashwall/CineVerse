@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cineverse.data.local.dataStore.TokenStorage
+import com.example.cineverse.data.local.dataStore.AuthStorage
 import com.example.cineverse.domain.model.LoginResponse
 import com.example.cineverse.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,7 +29,7 @@ sealed class Result<out T> {
 @SuppressLint("StaticFieldLeak")
 class LoginViewModel @Inject constructor(
     private val client: HttpClient,
-    private val tokenStorage: TokenStorage,
+    private val authStorage: AuthStorage,
     private val authRepository: AuthRepository
 ) : ViewModel() {
 
@@ -41,16 +41,17 @@ class LoginViewModel @Inject constructor(
 
 
     init {
-        //To avoid getting new access token every time we create this view model
         viewModelScope.launch {
-            val savedAccessToken = tokenStorage.getAccessToken()
-            if (savedAccessToken != null) {
+            // Collect reactively so the UI stays in sync with storage automatically
+            authStorage.authDataFlow.collect { (token, loginState) ->
                 _authUiState.update {
                     it.copy(
-                        accessToken = savedAccessToken,
+                        accessToken = token,
+                        isLoggedIn = loginState ?: false
                     )
                 }
             }
+
         }
     }
 
@@ -63,7 +64,7 @@ class LoginViewModel @Inject constructor(
 
         // Save the tokens to storage!
         if (requestTokenResponse is Result.Success) {
-            tokenStorage.saveAccessToken(
+            authStorage.saveAccessToken(
                 accessToken = requestTokenResponse.data.requestToken,
                 tokenExpiryDay = requestTokenResponse.data.expiresAt
             )
@@ -72,7 +73,7 @@ class LoginViewModel @Inject constructor(
                     accessToken = requestTokenResponse.data.requestToken,
                 )
             }
-            Log.d("Ktor", "Access Token= ${tokenStorage.getAccessToken()}")
+            Log.d("Ktor", "Access Token= ${authStorage.getAccessToken()}")
 
             return requestTokenResponse.data.requestToken
         } else return null
@@ -93,6 +94,17 @@ class LoginViewModel @Inject constructor(
             } else {
                 // 4. Handle case where token fetching failed
                 _loginResponse.value = Result.Error("Failed to fetch request token")
+            }
+
+            if (_loginResponse.value is Result.Success) {
+                authStorage.saveLoginState(true)
+                Log.d("cineverse dataStore", "Login state saved successfully")
+                _authUiState.update { it.copy(isLoggedIn = true) }
+            }
+            if (_loginResponse.value is Result.Error) {
+                authStorage.saveLoginState(false)
+                Log.d("cineverse dataStore", (_loginResponse.value as Result.Error).message)
+                _authUiState.update { it.copy(isLoggedIn = false) }
             }
         }
     }

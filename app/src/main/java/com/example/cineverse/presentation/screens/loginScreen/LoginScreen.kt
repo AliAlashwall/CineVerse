@@ -50,7 +50,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cineverse.R
-import com.example.cineverse.navigation.HomeScreen
+import com.example.cineverse.navigation.HomeRoute
 import com.example.cineverse.presentation.components.AnimatedLoading
 import com.example.cineverse.presentation.components.CineVerseBottomSheet
 import com.example.cineverse.presentation.components.CustomButton
@@ -97,7 +97,7 @@ fun LoginScreen(
 
             is Result.Success -> {
                 //navigate to home
-                navController.navigate(HomeScreen)
+                navController.navigate(HomeRoute)
             }
 
             is Result.Error -> {
