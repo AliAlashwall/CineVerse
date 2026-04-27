@@ -22,10 +22,10 @@ fun AnimatedLoading(
     modifier: Modifier = Modifier,
     tintColor: Color
 ) {
-    val preloaderLottieComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loading))
+    val preLoaderLottieComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loading))
 
     val progress by animateLottieCompositionAsState(
-        preloaderLottieComposition,
+        preLoaderLottieComposition,
         iterations = LottieConstants.IterateForever,
         isPlaying = true
     )
@@ -41,7 +41,7 @@ fun AnimatedLoading(
         )
     }
     LottieAnimation(
-        composition = preloaderLottieComposition,
+        composition = preLoaderLottieComposition,
         progress = { progress },
         modifier = modifier,
         dynamicProperties = dynamicProperties
