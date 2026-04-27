@@ -17,8 +17,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cineverse.R
+import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
 import com.example.cineverse.presentation.designSystem.theme.Theme
 
 @Composable
@@ -35,7 +37,7 @@ fun OnBoardingItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom
     ) {
-        Spacer(Modifier.height(140.dp))
+        Spacer(Modifier.weight(1f))
 
         Image(
             painter = painterResource(image),
@@ -70,7 +72,18 @@ fun OnBoardingItem(
             textAlign = TextAlign.Center,
         )
 
-//        Spacer(Modifier.height(132.dp))
-        Spacer(Modifier.weight(1f))
+        Spacer(Modifier.height(96.dp))
+    }
+}
+
+@Preview
+@Composable
+private fun OnBoardingPreview() {
+    CineVerseTheme {
+        OnBoardingItem(
+            image = R.drawable.on_boarding_1,
+            title = stringResource(R.string.welcome_to_your_movie_universe),
+            description = stringResource(R.string.let_s_get_you_set_up_we_ll_take_you_to_the_website_to_create_your_account)
+        )
     }
 }
