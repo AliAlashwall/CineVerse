@@ -48,7 +48,7 @@ fun OnBoardingItem(
             contentScale = ContentScale.FillBounds
         )
 
-        Spacer(Modifier.height(32.dp))
+        Spacer(Modifier.height(42.dp))
 
         Text(
             text = title,
@@ -56,6 +56,7 @@ fun OnBoardingItem(
             style = Theme.textStyle.titleMd,
             modifier = Modifier
                 .fillMaxWidth()
+                .height(25.dp)
                 .padding(horizontal = 8.dp),
             textAlign = TextAlign.Center
         )
@@ -68,8 +69,10 @@ fun OnBoardingItem(
             style = Theme.textStyle.bodyMdMedium,
             modifier = Modifier
                 .fillMaxWidth()
+                .height(38.dp)
                 .padding(horizontal = 8.dp),
             textAlign = TextAlign.Center,
+            maxLines = 2
         )
 
         Spacer(Modifier.height(96.dp))

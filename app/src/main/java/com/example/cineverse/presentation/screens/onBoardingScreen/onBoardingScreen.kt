@@ -1,10 +1,7 @@
 package com.example.cineverse.presentation.screens.onBoardingScreen
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,10 +22,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cineverse.R
@@ -82,58 +77,11 @@ fun OnBoardingScreen(
         )
 
         HorizontalPager(state = pagerState) { page ->
-//            OnBoardingItem(
-//                image = pagesList[page].first,
-//                title = pagesList[page].second,
-//                description = pagesList[page].third,
-//            )
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Bottom
-            ) {
-                Spacer(Modifier.weight(1f))
-
-                Image(
-                    painter = painterResource(pagesList[page].first),
-                    contentDescription = stringResource(R.string.on_boarding_1_image),
-                    modifier = Modifier
-                        .size(350.dp, 510.dp)
-                        .padding(horizontal = 16.dp),
-                    contentScale = ContentScale.FillBounds
-                )
-
-                Spacer(Modifier.height(42.dp))
-
-                Text(
-                    text = pagesList[page].second,
-                    color = Theme.colors.shadePrimary,
-                    style = Theme.textStyle.titleMd,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(25.dp)
-                        .padding(horizontal = 8.dp),
-                    textAlign = TextAlign.Center
-                )
-
-                Spacer(Modifier.height(8.dp))
-
-                Text(
-                    text = pagesList[page].third,
-                    color = Theme.colors.shadeSecondary,
-                    style = Theme.textStyle.bodyMdMedium,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(38.dp)
-                        .padding(horizontal = 8.dp),
-                    textAlign = TextAlign.Center,
-                    maxLines = 2
-                )
-
-                Spacer(Modifier.height(96.dp))
-            }
+            OnBoardingItem(
+                image = pagesList[page].first,
+                title = pagesList[page].second,
+                description = pagesList[page].third,
+            )
         }
 
         Row(
