@@ -34,7 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -52,8 +51,8 @@ import androidx.navigation.NavController
 import com.example.cineverse.R
 import com.example.cineverse.domain.util.Result
 import com.example.cineverse.navigation.HomeRoute
-import com.example.cineverse.presentation.components.AnimatedLoading
 import com.example.cineverse.presentation.components.CineVerseBottomSheet
+import com.example.cineverse.presentation.components.CineVerseLoading
 import com.example.cineverse.presentation.components.CustomButton
 import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
 import com.example.cineverse.presentation.designSystem.theme.Theme
@@ -85,15 +84,7 @@ fun LoginScreen(
         )
         when (loginResponseUiState) {
             is Result.Loading -> {
-                Box(Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f)),
-                    contentAlignment = Alignment.Center) {
-                    AnimatedLoading(
-                        modifier = Modifier.size(80.dp),
-                        tintColor = Theme.colors.shadePrimary,
-                    )
-                }
+                CineVerseLoading()
             }
 
             is Result.Success -> {
