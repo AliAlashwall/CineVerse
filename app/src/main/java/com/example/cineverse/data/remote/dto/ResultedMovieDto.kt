@@ -1,11 +1,11 @@
 package com.example.cineverse.data.remote.dto
 
-
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+
 @Serializable
-data class ResultedMovie(
+data class ResultedMovieDto(
     @SerialName("adult")
     val adult: Boolean,
     @SerialName("backdrop_path")
