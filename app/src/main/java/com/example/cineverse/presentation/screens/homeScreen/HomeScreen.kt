@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.cineverse.R
@@ -25,8 +27,12 @@ import com.example.cineverse.presentation.screens.homeScreen.components.Suggeste
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    navController: NavController
+    navController: NavController,
+    homeViewModel: HomeViewModel
 ) {
+    LaunchedEffect(Unit) {
+        homeViewModel.onStart()
+    }
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -91,8 +97,9 @@ fun HomeScreen(
 @Preview
 @Composable
 private fun HomeScreenPreview() {
+    val homeViewModel: HomeViewModel = hiltViewModel()
+    val navController = rememberNavController()
     CineVerseTheme {
-        val navController = rememberNavController()
-        HomeScreen(navController = navController)
+        HomeScreen(navController = navController, homeViewModel = homeViewModel)
     }
 }
