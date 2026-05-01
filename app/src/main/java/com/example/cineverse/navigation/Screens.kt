@@ -5,3 +5,10 @@ import kotlinx.serialization.Serializable
 @Serializable object OnBoardingRoute
 @Serializable object LoginRoute
 @Serializable object HomeRoute
+
+@Serializable object ExploreRoute
+
+@Serializable object MatchRoute
+
+@Serializable object ProfileRoute
+@Serializable object EmptyRoute

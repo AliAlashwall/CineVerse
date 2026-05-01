@@ -8,10 +8,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.CineVerseViewModel
+import com.example.cineverse.presentation.screens.EmptyScreen
+import com.example.cineverse.presentation.screens.exploreScreen.ExploreScreen
 import com.example.cineverse.presentation.screens.homeScreen.HomeScreen
 import com.example.cineverse.presentation.screens.loginScreen.LoginScreen
 import com.example.cineverse.presentation.screens.loginScreen.LoginViewModel
+import com.example.cineverse.presentation.screens.matchScreen.MatchScreen
 import com.example.cineverse.presentation.screens.onBoardingScreen.OnBoardingScreen
+import com.example.cineverse.presentation.screens.profileScreen.ProfileScreen
 
 
 @Composable
@@ -21,12 +25,12 @@ fun AppNavHost(
     loginViewModel: LoginViewModel,
     cineVerseViewModel: CineVerseViewModel,
 ) {
-    val isOnBoardingCompleted  by cineVerseViewModel.isOnBoardingCompleted.collectAsStateWithLifecycle()
+    val isOnBoardingCompleted by cineVerseViewModel.isOnBoardingCompleted.collectAsStateWithLifecycle()
     val authUiState by loginViewModel.authUiState.collectAsStateWithLifecycle()
     val isLoggedIn = authUiState.isLoggedIn
 
 
-    val startDestination = when{
+    val startDestination = when {
         !isOnBoardingCompleted -> OnBoardingRoute
         !isLoggedIn -> LoginRoute
         else -> HomeRoute
@@ -50,11 +54,32 @@ fun AppNavHost(
             LoginScreen(
                 loginViewModel = loginViewModel,
                 navController = navController
+
             )
         }
 
         composable<HomeRoute> {
-            HomeScreen()
+            HomeScreen(navController = navController)
         }
+
+        composable<ExploreRoute> {
+            ExploreScreen()
+        }
+        composable<MatchRoute> {
+            MatchScreen()
+        }
+        composable<ProfileRoute> {
+            ProfileScreen()
+        }
+        composable<EmptyRoute> {
+            EmptyScreen()
+        }
+
     }
 }
+
+
+
+
+
+
