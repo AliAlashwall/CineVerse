@@ -3,6 +3,7 @@ package com.example.cineverse.presentation.screens.homeScreen
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cineverse.data.local.dataStore.AuthStorage
 import com.example.cineverse.domain.repository.MoviesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.HttpClient
@@ -27,7 +28,9 @@ sealed class HomeEvent {
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val client: HttpClient,
-    private val moviesRepository: MoviesRepository
+    private val moviesRepository: MoviesRepository,
+    private val authStorage: AuthStorage
+
 ) : ViewModel() {
     private val _homeEvent = MutableStateFlow<HomeEvent>(HomeEvent.Loading)
     val homeEvent = _homeEvent.asStateFlow()
@@ -37,6 +40,13 @@ class HomeViewModel @Inject constructor(
 
     init {
         loadMovies()
+        viewModelScope.launch {
+            _homeUiState.update {
+                it.copy(
+                    guestId = authStorage.getGuestSessionId()
+                )
+            }
+        }
     }
 
     private fun loadMovies() {
@@ -44,10 +54,14 @@ class HomeViewModel @Inject constructor(
             _homeEvent.value = HomeEvent.Loading
             try {
                 coroutineScope {
-                    val upcomingDeferred = async { getMovies { moviesRepository.getUpComingMovies(client) } }
-                    val topRatedDeferred = async { getMovies { moviesRepository.getTopRatedMovies(client) } }
-                    val popularDeferred = async { getMovies { moviesRepository.getPopularMovies(client) } }
-                    val nowPlayingDeferred = async { getMovies { moviesRepository.getNowPlayingMovies(client) } }
+                    val upcomingDeferred =
+                        async { getMovies { moviesRepository.getUpComingMovies(client) } }
+                    val topRatedDeferred =
+                        async { getMovies { moviesRepository.getTopRatedMovies(client) } }
+                    val popularDeferred =
+                        async { getMovies { moviesRepository.getPopularMovies(client) } }
+                    val nowPlayingDeferred =
+                        async { getMovies { moviesRepository.getNowPlayingMovies(client) } }
 
                     val upcoming = upcomingDeferred.await()
                     val topRated = topRatedDeferred.await()
@@ -90,12 +104,18 @@ class HomeViewModel @Inject constructor(
                     null
                 }
             }
+
             is Result.Error -> {
                 Log.e("HomeViewModel", "Error fetching movies: ${result.message}")
                 null
             }
+
             Result.Loading -> null
             Result.Empty -> emptyList()
         }
+    }
+
+    fun getGuestMovies() {
+
     }
 }

@@ -35,7 +35,9 @@ fun HomeScreen(
 
 
     when (homeEvent) {
-        HomeEvent.Loading -> { CineVerseLoading() }
+        HomeEvent.Loading -> {
+            CineVerseLoading()
+        }
 
         HomeEvent.Success -> {
             HomeScreenContainer(
@@ -81,55 +83,69 @@ fun HomeScreenContainer(
         item {
             HomeHeader(userName = userName)
         }
-        item {
-            HomeHeaderCarousel(
-                moviesList = upComingMovies,
-                onClickMovie = { onClickCarouselMovie() }
-            )
-        }
-        item {
-            // Recently Released Section
-            SuggestedSection(
-                title = stringResource(id = R.string.recently_released),
-                moviesList = nowPlayingMovies,
-                onMovieClicked = {}
-            )
+
+        if (upComingMovies.isNotEmpty()) {
+            item {
+                HomeHeaderCarousel(
+                    moviesList = upComingMovies,
+                    onClickMovie = { onClickCarouselMovie() }
+                )
+            }
         }
 
-        item {
-            // Up coming Section
-            SuggestedSection(
-                title = stringResource(R.string.upcoming_movies),
-                moviesList = upComingMovies,
-                onMovieClicked = {}
-            )
+        if (nowPlayingMovies.isNotEmpty()) {
+            item {
+                // Recently Released Section
+                SuggestedSection(
+                    title = stringResource(id = R.string.recently_released),
+                    moviesList = nowPlayingMovies,
+                    onMovieClicked = {}
+                )
+            }
         }
 
-        item {
-            // Popular Section
-            SuggestedSection(
-                title = stringResource(R.string.matches_your_vibe),
-                moviesList = popularMovies,
-                onMovieClicked = {}
-            )
+        if (upComingMovies.isNotEmpty()) {
+            item {
+                // Up coming Section
+                SuggestedSection(
+                    title = stringResource(R.string.upcoming_movies),
+                    moviesList = upComingMovies,
+                    onMovieClicked = {}
+                )
+            }
         }
 
-        item {
-            // Top Rated Section
-            SuggestedSection(
-                title = stringResource(R.string.top_rated_tv_shows),
-                moviesList = topRatedMovies,
-                onMovieClicked = {}
-            )
+        if (popularMovies.isNotEmpty()) {
+            item {
+                // Popular Section
+                SuggestedSection(
+                    title = stringResource(R.string.matches_your_vibe),
+                    moviesList = popularMovies,
+                    onMovieClicked = {}
+                )
+            }
         }
 
-        item {
-            // Temporal until get the recently viewed movies
-            SuggestedSection(
-                title = stringResource(R.string.you_recently_viewed),
-                moviesList = popularMovies,
-                onMovieClicked = {}
-            )
+        if (topRatedMovies.isNotEmpty()) {
+            item {
+                // Top Rated Section
+                SuggestedSection(
+                    title = stringResource(R.string.top_rated_tv_shows),
+                    moviesList = topRatedMovies,
+                    onMovieClicked = {}
+                )
+            }
+        }
+
+        if (popularMovies.isNotEmpty()) {
+            item {
+                // Temporal until get the recently viewed movies
+                SuggestedSection(
+                    title = stringResource(R.string.you_recently_viewed),
+                    moviesList = popularMovies,
+                    onMovieClicked = {}
+                )
+            }
         }
     }
 }

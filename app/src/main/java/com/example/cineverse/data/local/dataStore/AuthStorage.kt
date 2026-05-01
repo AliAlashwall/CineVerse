@@ -26,9 +26,9 @@ class AuthStorage @Inject constructor(
 
         val LOGIN_SUCCESSFULLY = booleanPreferencesKey("login_successfully")
 
-        val SESSION_ID = stringPreferencesKey("Session_id")
+        val GUEST_SESSION_ID = stringPreferencesKey("Guest_session_id")
 
-        val SESSION_EXPIRY_DAY = stringPreferencesKey("session_expiry_day")
+        val GUEST_SESSION_EXPIRY_DAY = stringPreferencesKey("Guest_session_expiry_day")
     }
 
     suspend fun saveAccessToken(
@@ -49,16 +49,16 @@ class AuthStorage @Inject constructor(
         sessionExpiryDay: String
     ) {
         dataStore.edit { prefs ->
-            prefs[SESSION_EXPIRY_DAY] = sessionExpiryDay
+            prefs[GUEST_SESSION_EXPIRY_DAY] = sessionExpiryDay
         }
     }
 
-    suspend fun saveSessionId(sessionId: String) {
-        dataStore.edit { it[SESSION_ID] = sessionId }
+    suspend fun saveGuestSessionId(sessionId: String) {
+        dataStore.edit { it[GUEST_SESSION_ID] = sessionId }
     }
 
-    suspend fun getSessionId(): String? =
-        dataStore.data.map { it[SESSION_ID] }.firstOrNull()
+    suspend fun getGuestSessionId(): String? =
+        dataStore.data.map { it[GUEST_SESSION_ID] }.firstOrNull()
 
     suspend fun getLoginState(): Boolean? =
         dataStore.data.map { it[LOGIN_SUCCESSFULLY] }.firstOrNull()

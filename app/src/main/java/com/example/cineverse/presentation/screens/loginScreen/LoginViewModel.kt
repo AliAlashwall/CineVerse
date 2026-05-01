@@ -108,11 +108,13 @@ class LoginViewModel @Inject constructor(
             Log.d("Ktor", "Guest Session Response: $guestSessionResponse")
 
             if (guestSessionResponse is Result.Success) {
+                val guestSessionId = guestSessionResponse.data.guestSessionId
                 _authUiState.update {
                     it.copy(
-                        guestSessionId = guestSessionResponse.data.guestSessionId
+                        guestSessionId = guestSessionId
                     )
                 }
+                authStorage.saveGuestSessionId(guestSessionId)
             }
         }
     }
