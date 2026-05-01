@@ -28,7 +28,9 @@ import com.example.cineverse.presentation.designSystem.theme.Theme
 @Composable
 fun CineVerseErrorScreen(
     modifier: Modifier = Modifier,
-    onTryAgain: () -> Unit
+    onTryAgain: () -> Unit,
+    header: String = stringResource(id = R.string.oops_no_internet),
+    description: String = stringResource(id = R.string.offline_reconnect)
 ) {
     Column(
         modifier = modifier
@@ -53,14 +55,14 @@ fun CineVerseErrorScreen(
         }
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            text = stringResource(id = R.string.oops_no_internet),
+            text = header,
             style = Theme.textStyle.titleXl,
             color = Theme.colors.shadePrimary,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = stringResource(id = R.string.offline_reconnect),
+            text = description,
             style = Theme.textStyle.bodyMdRegular,
             color = Theme.colors.shadeSecondary,
             textAlign = TextAlign.Center,
