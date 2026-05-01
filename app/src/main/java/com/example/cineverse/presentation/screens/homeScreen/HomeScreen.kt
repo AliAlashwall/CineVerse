@@ -91,8 +91,7 @@ fun HomeScreenContainer(
             // Now Playing Section
             SuggestedSection(
                 title = stringResource(id = R.string.recently_released),
-                moviesList = nowPlayingMovies,
-                onShowMoreClicked = {}
+                moviesList = nowPlayingMovies
             )
         }
 
@@ -100,8 +99,7 @@ fun HomeScreenContainer(
             // Up coming Section
             SuggestedSection(
                 title = stringResource(R.string.upcoming_movies),
-                moviesList = upComingMovies,
-                onShowMoreClicked = {}
+                moviesList = upComingMovies
             )
         }
 
@@ -109,8 +107,7 @@ fun HomeScreenContainer(
             // Popular Section
             SuggestedSection(
                 title = stringResource(R.string.matches_your_vibe),
-                moviesList = popularMovies,
-                onShowMoreClicked = {}
+                moviesList = popularMovies
             )
         }
 
@@ -118,8 +115,7 @@ fun HomeScreenContainer(
             // Top Rated Section
             SuggestedSection(
                 title = stringResource(R.string.top_rated_tv_shows),
-                moviesList = topRatedMovies,
-                onShowMoreClicked = {}
+                moviesList = topRatedMovies
             )
         }
 
@@ -127,8 +123,7 @@ fun HomeScreenContainer(
             // Temporal until get the recently viewed movies
             SuggestedSection(
                 title = stringResource(R.string.you_recently_viewed),
-                moviesList = popularMovies,
-                onShowMoreClicked = {}
+                moviesList = popularMovies
             )
         }
     }
