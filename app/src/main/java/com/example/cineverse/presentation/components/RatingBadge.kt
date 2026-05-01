@@ -34,10 +34,11 @@ fun RatingBadge(
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = rating,
+                text = rating.take(if (rating.length > 3) 3 else rating.length),
                 style = Theme.textStyle.labelMdMedium,
-                color = Theme.colors.shadePrimary
-            )
+                color = Theme.colors.shadePrimary,
+
+                )
             Icon(
                 painter = painterResource(id = R.drawable.due_tone_star),
                 contentDescription = stringResource(R.string.rate_icon),
