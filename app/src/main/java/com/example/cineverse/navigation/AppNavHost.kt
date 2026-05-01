@@ -11,6 +11,7 @@ import com.example.CineVerseViewModel
 import com.example.cineverse.presentation.screens.EmptyScreen
 import com.example.cineverse.presentation.screens.exploreScreen.ExploreScreen
 import com.example.cineverse.presentation.screens.homeScreen.HomeScreen
+import com.example.cineverse.presentation.screens.homeScreen.HomeViewModel
 import com.example.cineverse.presentation.screens.loginScreen.LoginScreen
 import com.example.cineverse.presentation.screens.loginScreen.LoginViewModel
 import com.example.cineverse.presentation.screens.matchScreen.MatchScreen
@@ -23,6 +24,7 @@ fun AppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     loginViewModel: LoginViewModel,
+    homeViewModel: HomeViewModel,
     cineVerseViewModel: CineVerseViewModel,
 ) {
     val isOnBoardingCompleted by cineVerseViewModel.isOnBoardingCompleted.collectAsStateWithLifecycle()
@@ -59,7 +61,8 @@ fun AppNavHost(
         }
 
         composable<HomeRoute> {
-            HomeScreen(navController = navController)
+
+            HomeScreen(navController = navController, homeViewModel = homeViewModel)
         }
 
         composable<ExploreRoute> {

@@ -17,5 +17,4 @@ interface AuthRepository {
     ): Result<LoginResponse>
 
     suspend fun joinAsGuest(client: HttpClient): Result<GuestSessionResponse>
-
 }
