@@ -1,10 +1,12 @@
 package com.example.cineverse.data.remote.repository
 
+import com.example.cineverse.data.remote.dto.movieDetails.MovieDetailsDTO
 import com.example.cineverse.data.remote.dto.nowPlayingDto.NowPlayingMoviesDTO
 import com.example.cineverse.data.remote.dto.popular.PopularMoviesDTO
 import com.example.cineverse.data.remote.dto.topRated.TopRatedMoviesDto
 import com.example.cineverse.data.remote.dto.upComingDto.UpComingResponseDTO
 import com.example.cineverse.data.remote.mapper.toDomain
+import com.example.cineverse.domain.model.MovieDetails
 import com.example.cineverse.domain.model.NowPlayingMovies
 import com.example.cineverse.domain.model.PopularMovies
 import com.example.cineverse.domain.model.TopRatedMovies
@@ -14,6 +16,7 @@ import com.example.cineverse.domain.util.Result
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import javax.inject.Inject
 
 class MoviesRepositoryImpl @Inject constructor() : MoviesRepository {
@@ -54,6 +57,21 @@ class MoviesRepositoryImpl @Inject constructor() : MoviesRepository {
             Result.Success(data = popularMovies.toDomain())
         } catch (e: Exception) {
             Result.Error(e.localizedMessage ?: "An error occurred while fetching popular movies")
+        }
+    }
+
+    override suspend fun getMovieDetails(
+        movieId: Int,
+        client: HttpClient
+    ): Result<MovieDetails> {
+        return try {
+            val movieDetails = client.get("movie/$movieId") {
+                parameter("append_to_response", "credits")
+            }.body<MovieDetailsDTO>()
+
+            Result.Success(data = movieDetails.toDomain())
+        } catch (e: Exception) {
+            Result.Error(e.localizedMessage ?: "An error occurred while fetching movie details")
         }
     }
 }
