@@ -36,7 +36,7 @@ val mockMoviesList: List<Movie> = listOf(
         releaseDate = "1994-09-23",
         softcore = false,
         video = false,
-        voteAverage = 8.719,
+        voteAverage = 7.5,
         voteCount = 30212
     ),
     Movie(
@@ -56,7 +56,7 @@ val mockMoviesList: List<Movie> = listOf(
         releaseDate = "1994-09-23",
         softcore = false,
         video = false,
-        voteAverage = 8.719,
+        voteAverage = 7.5,
         voteCount = 30212
     ),
     Movie(
@@ -76,7 +76,7 @@ val mockMoviesList: List<Movie> = listOf(
         releaseDate = "1994-09-23",
         softcore = false,
         video = false,
-        voteAverage = 8.719,
+        voteAverage = 7.5,
         voteCount = 30212
     ),
     Movie(
@@ -96,7 +96,7 @@ val mockMoviesList: List<Movie> = listOf(
         releaseDate = "1994-09-23",
         softcore = false,
         video = false,
-        voteAverage = 8.719,
+        voteAverage = 7.5,
         voteCount = 30212
     ),
     Movie(
@@ -116,7 +116,7 @@ val mockMoviesList: List<Movie> = listOf(
         releaseDate = "1994-09-23",
         softcore = false,
         video = false,
-        voteAverage = 8.719,
+        voteAverage = 7.5,
         voteCount = 30212
     ), Movie(
         adult = false,
@@ -135,7 +135,7 @@ val mockMoviesList: List<Movie> = listOf(
         releaseDate = "1994-09-23",
         softcore = false,
         video = false,
-        voteAverage = 8.719,
+        voteAverage = 7.5,
         voteCount = 30212
     ), Movie(
         adult = false,
@@ -154,7 +154,7 @@ val mockMoviesList: List<Movie> = listOf(
         releaseDate = "1994-09-23",
         softcore = false,
         video = false,
-        voteAverage = 8.719,
+        voteAverage = 7.5,
         voteCount = 30212
     ),
     Movie(
@@ -174,7 +174,7 @@ val mockMoviesList: List<Movie> = listOf(
         releaseDate = "1994-09-23",
         softcore = false,
         video = false,
-        voteAverage = 8.719,
+        voteAverage = 7.5,
         voteCount = 30212
     ),
     Movie(
@@ -194,7 +194,7 @@ val mockMoviesList: List<Movie> = listOf(
         releaseDate = "1994-09-23",
         softcore = false,
         video = false,
-        voteAverage = 8.719,
+        voteAverage = 7.5,
         voteCount = 30212
     ),
     Movie(
@@ -214,7 +214,7 @@ val mockMoviesList: List<Movie> = listOf(
         releaseDate = "1994-09-23",
         softcore = false,
         video = false,
-        voteAverage = 8.719,
+        voteAverage = 7.5,
         voteCount = 30212
     )
 )

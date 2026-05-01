@@ -58,7 +58,7 @@ fun TopRatedMoviesDto.toDomain(): TopRatedMovies {
     val movies = this.results.map { it.toDomain() }
     return TopRatedMovies(
         page = this.page,
-        results = movies,
+        resultedMovies = movies,
         totalPages = this.totalPages,
         totalResults = this.totalResults
     )
