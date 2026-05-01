@@ -1,5 +1,6 @@
 package com.example.cineverse.presentation.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +24,8 @@ import com.example.cineverse.presentation.designSystem.theme.Theme
 @Composable
 fun MovieCard(
     movie: Movie,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onMovieClicked: () -> Unit
 ) {
     Column(
         modifier = modifier.width(136.dp),
@@ -31,6 +33,7 @@ fun MovieCard(
     ) {
         Box(
             modifier = Modifier
+                .clickable { onMovieClicked() }
                 .fillMaxWidth()
                 .aspectRatio(0.74f)
                 .clip(RoundedCornerShape(12.dp))
