@@ -50,6 +50,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cineverse.R
+import com.example.cineverse.domain.util.Result
 import com.example.cineverse.navigation.HomeRoute
 import com.example.cineverse.presentation.components.AnimatedLoading
 import com.example.cineverse.presentation.components.CineVerseBottomSheet

@@ -3,7 +3,7 @@ package com.example.cineverse.domain.repository
 import com.example.cineverse.domain.model.GuestSessionResponse
 import com.example.cineverse.domain.model.LoginResponse
 import com.example.cineverse.domain.model.TokenResponse
-import com.example.cineverse.presentation.screens.loginScreen.Result
+import com.example.cineverse.domain.util.Result
 import io.ktor.client.HttpClient
 
 interface AuthRepository {

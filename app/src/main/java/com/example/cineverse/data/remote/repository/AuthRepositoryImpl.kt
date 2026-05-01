@@ -9,7 +9,7 @@ import com.example.cineverse.domain.model.GuestSessionResponse
 import com.example.cineverse.domain.model.LoginResponse
 import com.example.cineverse.domain.model.TokenResponse
 import com.example.cineverse.domain.repository.AuthRepository
-import com.example.cineverse.presentation.screens.loginScreen.Result
+
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -18,9 +18,10 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import javax.inject.Inject
+import com.example.cineverse.domain.util.Result
 
 class AuthRepositoryImpl @Inject constructor() : AuthRepository {
-    override suspend fun fetchRequestToken(client: HttpClient): Result<TokenResponse> {
+    override suspend fun fetchRequestToken(client: HttpClient): Result <TokenResponse> {
         return try {
             val response = client.get("authentication/token/new").body<RequestTokenResponseDTO>()
             Result.Success(response.toDomain())

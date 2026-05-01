@@ -10,7 +10,7 @@ import com.example.cineverse.domain.model.PopularMovies
 import com.example.cineverse.domain.model.TopRatedMovies
 import com.example.cineverse.domain.model.UpComingMovies
 import com.example.cineverse.domain.repository.MoviesRepository
-import com.example.cineverse.presentation.screens.loginScreen.Result
+import com.example.cineverse.domain.util.Result
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
