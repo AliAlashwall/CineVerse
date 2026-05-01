@@ -41,7 +41,7 @@ fun HomeHeaderCarousel(
     LaunchedEffect(pagerState) {
         while (true) {
             delay(3000)
-            if (!pagerState.isScrollInProgress) {
+            if (!pagerState.isScrollInProgress && moviesList.isNotEmpty()) {
                 val nextPage = (pagerState.currentPage + 1) % moviesList.size
                 pagerState.animateScrollToPage(
                     nextPage,
