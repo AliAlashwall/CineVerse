@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
@@ -18,7 +17,7 @@ fun CineVerseLoading(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.Transparent),
+            .background(Theme.colors.backgroundScreen),
         contentAlignment = Alignment.Center
     ) {
         AnimatedLoading(

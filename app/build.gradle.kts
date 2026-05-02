@@ -89,6 +89,8 @@ dependencies {
 
     implementation(libs.coil.compose)
 
+    implementation("androidx.core:core-splashscreen:1.0.1")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

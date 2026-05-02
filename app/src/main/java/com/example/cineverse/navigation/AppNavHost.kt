@@ -3,6 +3,7 @@ package com.example.cineverse.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -20,7 +21,6 @@ import com.example.cineverse.presentation.screens.movieDetailsScreen.MovieDetail
 import com.example.cineverse.presentation.screens.movieDetailsScreen.MovieDetailsViewModel
 import com.example.cineverse.presentation.screens.onBoardingScreen.OnBoardingScreen
 import com.example.cineverse.presentation.screens.profileScreen.ProfileScreen
-import androidx.hilt.navigation.compose.hiltViewModel
 
 
 @Composable
@@ -37,8 +37,8 @@ fun AppNavHost(
 
 
     val startDestination = when {
-        !isOnBoardingCompleted -> OnBoardingRoute
-        !isLoggedIn -> LoginRoute
+        isOnBoardingCompleted == false -> OnBoardingRoute
+        isLoggedIn == false -> LoginRoute
         else -> HomeRoute
     }
     NavHost(
@@ -82,7 +82,7 @@ fun AppNavHost(
             EmptyScreen()
         }
 
-        composable <MovieDetailsRoute>{ backStackEntry ->
+        composable<MovieDetailsRoute> { backStackEntry ->
             // To ensure  it is only created when the navigation destination is active and the required arguments are available.
             val movieDetailsViewModel: MovieDetailsViewModel = hiltViewModel()
 
@@ -90,7 +90,7 @@ fun AppNavHost(
             MovieDetailsScreen(
                 movieDetailsViewModel = movieDetailsViewModel,
                 movieId = arg.movieId,
-                navController= navController
+                navController = navController
             )
         }
 
