@@ -31,7 +31,7 @@ import kotlin.math.absoluteValue
 fun HomeHeaderCarousel(
     modifier: Modifier = Modifier,
     moviesList: List<Movie>,
-    onClickMovie: () -> Unit
+    onClickMovie: (Movie) -> Unit
 ) {
     val pagerState = rememberPagerState(
         initialPage = 1,
@@ -87,7 +87,7 @@ fun HomeHeaderCarousel(
                 title = item.title,
                 description = item.title,
                 rate = item.voteAverage.toString(),
-                onClick = { onClickMovie() }
+                onClick = { onClickMovie(item) }
             )
         }
     }
