@@ -24,7 +24,6 @@ import com.example.cineverse.navigation.MatchRoute
 import com.example.cineverse.navigation.ProfileRoute
 import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
 import com.example.cineverse.presentation.designSystem.theme.Theme
-import com.example.cineverse.presentation.screens.matchScreen.MatchScreen
 
 
 @SuppressLint("RestrictedApi")
@@ -70,7 +69,7 @@ fun CineVerseBottomBar(
             unSelectedIcon = R.drawable.outline_magic_stick,
             selectedIcon = R.drawable.due_tone_magic_stick,
             label = stringResource(id = R.string.match),
-            isSelected = currentRoute?.hasRoute(MatchScreen()::class) == true,
+            isSelected = currentRoute?.hasRoute(MatchRoute::class) == true,
             onClick = {
                 navController.navigate(MatchRoute) {
                     launchSingleTop = true   // to avoid duplicated nav
