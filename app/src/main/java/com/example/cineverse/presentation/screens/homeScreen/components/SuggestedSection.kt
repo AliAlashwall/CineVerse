@@ -34,7 +34,7 @@ fun SuggestedSection(
     title: String,
     moviesList: List<Movie>,
     initialItemsCount: Int = 3,
-    onMovieClicked: () -> Unit
+    onMovieClicked: (Movie) -> Unit
 ) {
     val listState = rememberLazyListState()
     val listCoroutineScope = rememberCoroutineScope()
@@ -95,7 +95,7 @@ fun SuggestedSection(
             ) { movie ->
                 MovieCard(
                     movie = movie,
-                    onMovieClicked = { onMovieClicked() }
+                    onMovieClicked = { onMovieClicked(movie) }
                 )
             }
         }

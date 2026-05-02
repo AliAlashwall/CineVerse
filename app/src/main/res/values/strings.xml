@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">CineVerse</string>
     <string name="microphone">Microphone</string>
     <string name="speak_to_search">Speak to search</string>
@@ -227,5 +227,6 @@
     <string name="forget_password_description">We’ll take you to the website so you can securely update your password.</string>
     <string name="on_boarding_1_image" translatable="false">On Boarding 1 Image</string>
     <string name="back_arrow" translatable="false">back</string>
-    <string name="forward_arrow">next\n</string>
+    <string name="forward_arrow" tools:ignore="MissingTranslation">next\n</string>
+    <string name="play_movie" translatable="false">play</string>
 </resources>

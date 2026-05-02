@@ -37,6 +37,7 @@ class MainActivity : ComponentActivity() {
             val loginViewModel: LoginViewModel = hiltViewModel()
             val cineVerseViewModel: CineVerseViewModel = hiltViewModel()
             val homeViewModel: HomeViewModel = hiltViewModel()
+
             val navController = rememberNavController()
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val bottomBarScreens = listOf(HomeRoute, ExploreRoute, MatchRoute, ProfileRoute)
