@@ -1,5 +1,6 @@
 package com.example.cineverse.presentation.designSystem.theme
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
@@ -14,7 +15,7 @@ import com.example.cineverse.presentation.designSystem.typography.LocalCineVerse
 
 @Composable
 fun CineVerseTheme(
-    state: ThemeState = ThemeState(isDark = true, onThemeChanged = {}),
+    state: ThemeState = ThemeState(isDark = isSystemInDarkTheme(), onThemeChanged = {}),
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

@@ -24,6 +24,7 @@ import com.example.cineverse.navigation.MatchRoute
 import com.example.cineverse.navigation.ProfileRoute
 import com.example.cineverse.presentation.components.bottomBar.CineVerseBottomBar
 import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
+import com.example.cineverse.presentation.designSystem.theme.Theme
 import com.example.cineverse.presentation.screens.homeScreen.HomeViewModel
 import com.example.cineverse.presentation.screens.loginScreen.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,6 +60,7 @@ class MainActivity : ComponentActivity() {
             CineVerseTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
+                    containerColor = Theme.colors.backgroundScreen,
                     bottomBar =
                         {
                             if (showBottomBar) {
