@@ -2,13 +2,23 @@ package com.example.cineverse.navigation
 
 import kotlinx.serialization.Serializable
 
-@Serializable object OnBoardingRoute
-@Serializable object LoginRoute
-@Serializable object HomeRoute
+@Serializable
+object OnBoardingRoute
+@Serializable
+object LoginRoute
+@Serializable
+object HomeRoute
 
-@Serializable object ExploreRoute
+@Serializable
+object ExploreRoute
 
-@Serializable object MatchRoute
+@Serializable
+object MatchRoute
 
-@Serializable object ProfileRoute
-@Serializable object EmptyRoute
+@Serializable
+object ProfileRoute
+@Serializable
+object EmptyRoute
+
+@Serializable
+data class MovieDetailsRoute(val movieId: Int)
