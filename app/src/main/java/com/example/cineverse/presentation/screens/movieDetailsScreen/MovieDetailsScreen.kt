@@ -1,6 +1,7 @@
 package com.example.cineverse.presentation.screens.movieDetailsScreen
 
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -25,10 +26,16 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cineverse.R
 import com.example.cineverse.domain.model.Cast
+import com.example.cineverse.domain.model.Movie
 import com.example.cineverse.domain.model.mockCastList
+import com.example.cineverse.navigation.MovieDetailsRoute
 import com.example.cineverse.presentation.components.MoviePoster
 import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
 import com.example.cineverse.presentation.designSystem.theme.Theme
+import com.example.cineverse.presentation.screens.homeScreen.components.SuggestedSection
+import com.example.cineverse.presentation.screens.movieDetailsScreen.components.MovieOverViewCard
+import com.example.cineverse.presentation.screens.movieDetailsScreen.components.StarCastSection
+import com.example.cineverse.presentation.screens.movieDetailsScreen.components.StorylineSection
 import com.example.cineverse.util.toRuntimeFormat
 
 
@@ -59,7 +66,11 @@ fun MovieDetailsScreen(
         movieDuration = movieUiState.movieDetails?.runtime?.toRuntimeFormat() ?: "0h 0mm",
         dateCreated = movieUiState.movieDetails?.releaseDate.toString(),
         storyLineContent = movieUiState.movieDetails?.overview ?: "",
-        castList = movieUiState.movieDetails?.credits?.cast ?: emptyList()
+        castList = movieUiState.movieDetails?.credits?.cast ?: emptyList(),
+        moviesList = movieUiState.popularMovies,
+        onMovieClicked = { movie ->
+            navController.navigate(MovieDetailsRoute(movie.id))
+        }
     )
 }
 
@@ -76,6 +87,8 @@ fun MovieDetailsContainer(
     onBackClicked: () -> Unit,
     onPlayClicked: () -> Unit,
     onAddClicked: () -> Unit,
+    onMovieClicked: (Movie) -> Unit,
+    moviesList: List<Movie>,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -128,18 +141,25 @@ fun MovieDetailsContainer(
                 storyLineContent = storyLineContent,
                 modifier = Modifier.padding(top = 12.dp)
             )
-
-
         }
 
         item {
             StarCastSection(castList = castList, modifier = Modifier.padding(top = 12.dp))
         }
+
+        item {
+            SuggestedSection(
+                title = stringResource(R.string.you_might_also_like),
+                moviesList = moviesList,
+                onMovieClicked = { onMovieClicked(it) },
+                modifier = Modifier.padding(bottom = 520.dp) // to test the animation of the header
+            )
+        }
     }
 }
 
 
-@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL)
 @Composable
 private fun MovieDetailsPreview() {
     CineVerseTheme {
@@ -154,7 +174,9 @@ private fun MovieDetailsPreview() {
             movieDuration = "2h 32m",
             dateCreated = "2008, Jul 18",
             storyLineContent = "Batman raises the stakes in his war on crime. With the help of Lt. Jim Gordon and District Attorney Harvey Dent, Batman sets out to",
-            castList = mockCastList
+            castList = mockCastList,
+            moviesList = emptyList(),
+            onMovieClicked = {}
         )
     }
 }

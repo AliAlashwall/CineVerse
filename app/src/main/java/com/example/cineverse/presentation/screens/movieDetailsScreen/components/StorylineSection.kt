@@ -1,4 +1,4 @@
-package com.example.cineverse.presentation.screens.movieDetailsScreen
+package com.example.cineverse.presentation.screens.movieDetailsScreen.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

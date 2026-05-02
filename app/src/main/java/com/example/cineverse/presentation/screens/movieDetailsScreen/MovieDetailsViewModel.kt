@@ -23,14 +23,16 @@ class MovieDetailsViewModel @Inject constructor(
     private val _movieUiState = MutableStateFlow(MovieUiState())
     val movieUiState = _movieUiState.asStateFlow()
 
+    init {
+        getPopularMovies()
+    }
 
-
-
-    fun getMovieDetails(moveId:Int) {
+    fun getMovieDetails(moveId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val movieDetails = moviesRepository.getMovieDetails(movieId = moveId, client = client)
-                Log.d("MovieDetailsViewModel", "Movie details: ${movieDetails}")
+                val movieDetails =
+                    moviesRepository.getMovieDetails(movieId = moveId, client = client)
+                Log.d("MovieDetailsViewModel", "Movie details: $movieDetails")
                 if (movieDetails is Result.Success) {
                     _movieUiState.update { it.copy(movieDetails = movieDetails.data) }
                     Log.d("MovieDetailsViewModel", "Movie details: ${movieDetails.data}")
@@ -38,6 +40,20 @@ class MovieDetailsViewModel @Inject constructor(
 
             } catch (e: Exception) {
                 Log.e("MovieDetailsViewModel", "Error fetching movie details", e)
+            }
+
+        }
+    }
+
+    fun getPopularMovies() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val movies = moviesRepository.getPopularMovies(client)
+
+            if (movies is Result.Success) {
+                _movieUiState.update { it.copy(popularMovies = movies.data.resultedMovies) }
+            }
+            if (movies is Result.Error) {
+                Log.e("MovieDetailsViewModel", "Error fetching popular movies: ${movies.message}")
             }
 
         }
