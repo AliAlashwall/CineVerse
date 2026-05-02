@@ -187,11 +187,11 @@ fun SpokenLanguageDTO.toDomain(): SpokenLanguage {
 }
 
 fun MovieDetailsDTO.toDomain(): MovieDetails {
-    val belongsToCollection = this.belongsToCollection.toDomain()
+    val belongsToCollection = this.belongsToCollection?.toDomain()
     val credits = this.credits.toDomain()
     val genres = this.genres.map { it.toDomain() }
-    val productionCompanies = this.productionCompanies.map { it.toDomain() }
-    val productionCountries = this.productionCountries.map { it.toDomain() }
+    val productionCompanies = this.productionCompanies?.map { it.toDomain() }
+    val productionCountries = this.productionCountries?.map { it.toDomain() }
     val spokenLanguages = this.spokenLanguages.map { it.toDomain() }
 
     return MovieDetails(
@@ -210,8 +210,8 @@ fun MovieDetailsDTO.toDomain(): MovieDetails {
         overview = this.overview,
         popularity = this.popularity,
         posterPath = this.posterPath,
-        productionCompanies = productionCompanies,
-        productionCountries = productionCountries,
+        productionCompanies = productionCompanies ?: emptyList(),
+        productionCountries = productionCountries ?: emptyList(),
         releaseDate = this.releaseDate,
         revenue = this.revenue,
         runtime = this.runtime,
@@ -225,4 +225,3 @@ fun MovieDetailsDTO.toDomain(): MovieDetails {
         voteCount = this.voteCount
     )
 }
-

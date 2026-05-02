@@ -9,9 +9,9 @@ data class MovieDetailsDTO(
     @SerialName("adult")
     val adult: Boolean,
     @SerialName("backdrop_path")
-    val backdropPath: String,
+    val backdropPath: String?,
     @SerialName("belongs_to_collection")
-    val belongsToCollection: BelongsToCollectionDTO,
+    val belongsToCollection: BelongsToCollectionDTO?,
     @SerialName("budget")
     val budget: Int,
     @SerialName("credits")
@@ -19,11 +19,11 @@ data class MovieDetailsDTO(
     @SerialName("genres")
     val genres: List<GenreDTO>,
     @SerialName("homepage")
-    val homepage: String,
+    val homepage: String?,
     @SerialName("id")
     val id: Int,
     @SerialName("imdb_id")
-    val imdbId: String,
+    val imdbId: String?,
     @SerialName("origin_country")
     val originCountry: List<String>,
     @SerialName("original_language")
@@ -35,25 +35,25 @@ data class MovieDetailsDTO(
     @SerialName("popularity")
     val popularity: Double,
     @SerialName("poster_path")
-    val posterPath: String,
+    val posterPath: String?,
     @SerialName("production_companies")
-    val productionCompanies: List<ProductionCompanyDTO>,
+    val productionCompanies: List<ProductionCompanyDTO>?,
     @SerialName("production_countries")
-    val productionCountries: List<ProductionCountryDTO>,
+    val productionCountries: List<ProductionCountryDTO>?,
     @SerialName("release_date")
     val releaseDate: String,
     @SerialName("revenue")
     val revenue: Int,
     @SerialName("runtime")
-    val runtime: Int,
+    val runtime: Int?,
     @SerialName("softcore")
-    val softcore: Boolean,
+    val softcore: Boolean? = null,
     @SerialName("spoken_languages")
     val spokenLanguages: List<SpokenLanguageDTO>,
     @SerialName("status")
     val status: String,
     @SerialName("tagline")
-    val tagline: String,
+    val tagline: String?,
     @SerialName("title")
     val title: String,
     @SerialName("video")

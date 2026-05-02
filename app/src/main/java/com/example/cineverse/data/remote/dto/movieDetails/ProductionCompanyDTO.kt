@@ -9,7 +9,7 @@ data class ProductionCompanyDTO(
     @SerialName("id")
     val id: Int,
     @SerialName("logo_path")
-    val logoPath: String,
+    val logoPath: String?,
     @SerialName("name")
     val name: String,
     @SerialName("origin_country")
