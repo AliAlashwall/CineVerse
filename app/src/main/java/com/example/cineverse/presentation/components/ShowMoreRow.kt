@@ -7,9 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -22,10 +19,8 @@ fun ShowMoreRow(
     modifier: Modifier = Modifier,
     title: String,
     shouldShowMoreButton: Boolean,
-    isExpanded: Boolean,
     handleShowMore: () -> Unit
 ) {
-    val isReviewsExpanded by remember { mutableStateOf(isExpanded) }
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -44,9 +39,7 @@ fun ShowMoreRow(
                 text = stringResource(id = R.string.show_more),
                 style = Theme.textStyle.bodyMdMedium,
                 color = Theme.colors.brandPrimary,
-                modifier = Modifier.clickable(enabled = !isReviewsExpanded) {
-                    handleShowMore()
-                }
+                modifier = Modifier.clickable { handleShowMore() }
             )
         }
     }
