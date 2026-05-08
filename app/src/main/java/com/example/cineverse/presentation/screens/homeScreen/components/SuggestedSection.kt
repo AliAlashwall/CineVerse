@@ -56,7 +56,6 @@ fun SuggestedSection(
         ShowMoreRow(
             title = title,
             shouldShowMoreButton = shouldShowMoreButton,
-            isExpanded = isExpanded,
             handleShowMore = { handleShowMore() }
         )
         LazyRow(
