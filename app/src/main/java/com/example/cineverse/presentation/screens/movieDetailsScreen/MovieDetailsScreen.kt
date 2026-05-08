@@ -27,6 +27,7 @@ import androidx.navigation.NavController
 import com.example.cineverse.R
 import com.example.cineverse.domain.model.Cast
 import com.example.cineverse.domain.model.Movie
+import com.example.cineverse.domain.model.Review
 import com.example.cineverse.domain.model.mockCastList
 import com.example.cineverse.navigation.MovieDetailsRoute
 import com.example.cineverse.presentation.components.MoviePoster
@@ -34,6 +35,7 @@ import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
 import com.example.cineverse.presentation.designSystem.theme.Theme
 import com.example.cineverse.presentation.screens.homeScreen.components.SuggestedSection
 import com.example.cineverse.presentation.screens.movieDetailsScreen.components.MovieOverViewCard
+import com.example.cineverse.presentation.screens.movieDetailsScreen.components.ReviewsSection
 import com.example.cineverse.presentation.screens.movieDetailsScreen.components.StarCastSection
 import com.example.cineverse.presentation.screens.movieDetailsScreen.components.StorylineSection
 import com.example.cineverse.util.toRuntimeFormat
@@ -70,7 +72,8 @@ fun MovieDetailsScreen(
         moviesList = movieUiState.popularMovies,
         onMovieClicked = { movie ->
             navController.navigate(MovieDetailsRoute(movie.id))
-        }
+        },
+        reviewsList = movieUiState.movieDetails?.reviews ?: emptyList()
     )
 }
 
@@ -89,6 +92,7 @@ fun MovieDetailsContainer(
     onAddClicked: () -> Unit,
     onMovieClicked: (Movie) -> Unit,
     moviesList: List<Movie>,
+    reviewsList: List<Review>
 ) {
     LazyColumn(
         modifier = Modifier
@@ -152,9 +156,15 @@ fun MovieDetailsContainer(
                 title = stringResource(R.string.you_might_also_like),
                 moviesList = moviesList,
                 onMovieClicked = { onMovieClicked(it) },
-                modifier = Modifier.padding(bottom = 520.dp) // to test the animation of the header
             )
         }
+
+        item {
+            ReviewsSection(
+                reviews = reviewsList
+            )
+        }
+
     }
 }
 
@@ -176,7 +186,8 @@ private fun MovieDetailsPreview() {
             storyLineContent = "Batman raises the stakes in his war on crime. With the help of Lt. Jim Gordon and District Attorney Harvey Dent, Batman sets out to",
             castList = mockCastList,
             moviesList = emptyList(),
-            onMovieClicked = {}
+            onMovieClicked = {},
+            reviewsList = emptyList()
         )
     }
 }
