@@ -47,13 +47,14 @@ class MovieDetailsViewModel @Inject constructor(
 
     fun getPopularMovies() {
         viewModelScope.launch(Dispatchers.IO) {
-            val movies = moviesRepository.getPopularMovies(client)
+            try {
+                val movies = moviesRepository.getPopularMovies(client)
 
-            if (movies is Result.Success) {
-                _movieUiState.update { it.copy(popularMovies = movies.data.resultedMovies) }
-            }
-            if (movies is Result.Error) {
-                Log.e("MovieDetailsViewModel", "Error fetching popular movies: ${movies.message}")
+                if (movies is Result.Success) {
+                    _movieUiState.update { it.copy(popularMovies = movies.data.resultedMovies) }
+                }
+            } catch (e: Exception) {
+                Log.e("MovieDetailsViewModel", "Error fetching popular movies", e)
             }
 
         }

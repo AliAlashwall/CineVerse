@@ -229,4 +229,5 @@
     <string name="back_arrow" translatable="false">back</string>
     <string name="forward_arrow" tools:ignore="MissingTranslation">next\n</string>
     <string name="play_movie" translatable="false">play</string>
+    <string name="user_image" translatable="false">user image</string>
 </resources>

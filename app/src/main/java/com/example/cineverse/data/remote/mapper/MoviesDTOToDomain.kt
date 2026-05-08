@@ -193,6 +193,7 @@ fun MovieDetailsDTO.toDomain(): MovieDetails {
     val productionCompanies = this.productionCompanies?.map { it.toDomain() }
     val productionCountries = this.productionCountries?.map { it.toDomain() }
     val spokenLanguages = this.spokenLanguages.map { it.toDomain() }
+    val reviews = this.reviews?.results?.map { it.toDomain() } ?: emptyList()
 
     return MovieDetails(
         adult = this.adult,
@@ -222,6 +223,7 @@ fun MovieDetailsDTO.toDomain(): MovieDetails {
         title = this.title,
         video = this.video,
         voteAverage = this.voteAverage,
-        voteCount = this.voteCount
+        voteCount = this.voteCount,
+        reviews = reviews
     )
 }

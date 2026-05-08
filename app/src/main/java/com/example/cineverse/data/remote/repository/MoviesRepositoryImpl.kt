@@ -1,5 +1,6 @@
 package com.example.cineverse.data.remote.repository
 
+import android.util.Log
 import com.example.cineverse.data.remote.dto.movieDetails.MovieDetailsDTO
 import com.example.cineverse.data.remote.dto.nowPlayingDto.NowPlayingMoviesDTO
 import com.example.cineverse.data.remote.dto.popular.PopularMoviesDTO
@@ -66,9 +67,10 @@ class MoviesRepositoryImpl @Inject constructor() : MoviesRepository {
     ): Result<MovieDetails> {
         return try {
             val movieDetails = client.get("movie/$movieId") {
-                parameter("append_to_response", "credits")
+                // to get the full cast and reviews data with the movie details
+                parameter("append_to_response", "credits,reviews")
             }.body<MovieDetailsDTO>()
-
+            Log.d("MoviesRepositoryImpl", "Fetched movie details Successfully: $movieDetails")
             Result.Success(data = movieDetails.toDomain())
         } catch (e: Exception) {
             Result.Error(e.localizedMessage ?: "An error occurred while fetching movie details")

@@ -61,5 +61,7 @@ data class MovieDetailsDTO(
     @SerialName("vote_average")
     val voteAverage: Double,
     @SerialName("vote_count")
-    val voteCount: Int
+    val voteCount: Int,
+    @SerialName("reviews")
+    val reviews: ReviewResponseDTO? = null
 )
