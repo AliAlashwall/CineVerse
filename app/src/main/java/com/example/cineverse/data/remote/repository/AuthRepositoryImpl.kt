@@ -2,11 +2,13 @@ package com.example.cineverse.data.remote.repository
 
 import com.example.cineverse.data.remote.dto.GuestSessionResponseDTO
 import com.example.cineverse.data.remote.dto.RequestTokenResponseDTO
+import com.example.cineverse.data.remote.dto.SessionIdResponseDto
 import com.example.cineverse.data.remote.dto.login.LoginRequest
 import com.example.cineverse.data.remote.dto.login.LoginResponseDTO
 import com.example.cineverse.data.remote.mapper.toDomain
 import com.example.cineverse.domain.model.GuestSessionResponse
 import com.example.cineverse.domain.model.LoginResponse
+import com.example.cineverse.domain.model.SessionIdResponse
 import com.example.cineverse.domain.model.TokenResponse
 import com.example.cineverse.domain.repository.AuthRepository
 
@@ -21,7 +23,7 @@ import javax.inject.Inject
 import com.example.cineverse.domain.util.Result
 
 class AuthRepositoryImpl @Inject constructor() : AuthRepository {
-    override suspend fun fetchRequestToken(client: HttpClient): Result <TokenResponse> {
+    override suspend fun fetchRequestToken(client: HttpClient): Result<TokenResponse> {
         return try {
             val response = client.get("authentication/token/new").body<RequestTokenResponseDTO>()
             Result.Success(response.toDomain())
@@ -48,9 +50,26 @@ class AuthRepositoryImpl @Inject constructor() : AuthRepository {
         }
     }
 
+    override suspend fun getSessionId(
+        client: HttpClient,
+        requestToken: String
+    ): Result<SessionIdResponse> {
+        return try {
+            val response = client.post("authentication/session/new") {
+                contentType(ContentType.Application.Json)
+                setBody(mapOf("request_token" to requestToken))
+            }.body<SessionIdResponseDto>()
+
+            Result.Success(response.toDomain())
+        } catch (e: Exception) {
+            Result.Error(e.localizedMessage ?: "An error occurred while fetching session ID")
+        }
+    }
+
     override suspend fun joinAsGuest(client: HttpClient): Result<GuestSessionResponse> {
         return try {
-            val response = client.get("authentication/guest_session/new").body<GuestSessionResponseDTO>()
+            val response =
+                client.get("authentication/guest_session/new").body<GuestSessionResponseDTO>()
             Result.Success(response.toDomain())
         } catch (e: Exception) {
             Result.Error(e.localizedMessage ?: "An error occurred while joining as guest")

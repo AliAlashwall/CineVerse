@@ -2,6 +2,7 @@ package com.example.cineverse.domain.repository
 
 import com.example.cineverse.domain.model.GuestSessionResponse
 import com.example.cineverse.domain.model.LoginResponse
+import com.example.cineverse.domain.model.SessionIdResponse
 import com.example.cineverse.domain.model.TokenResponse
 import com.example.cineverse.domain.util.Result
 import io.ktor.client.HttpClient
@@ -15,6 +16,13 @@ interface AuthRepository {
         password: String,
         requestToken: String
     ): Result<LoginResponse>
+
+
+    suspend fun getSessionId(
+        client: HttpClient,
+        requestToken: String
+    ): Result<SessionIdResponse>
+
 
     suspend fun joinAsGuest(client: HttpClient): Result<GuestSessionResponse>
 }
