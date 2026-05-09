@@ -44,7 +44,6 @@ class LoginViewModel @Inject constructor(
                     )
                 }
             }
-
         }
     }
 
@@ -91,12 +90,32 @@ class LoginViewModel @Inject constructor(
 
             if (_loginResponse.value is Result.Success) {
                 authStorage.saveLoginState(true)
-                Log.d("cineverse dataStore", "Login state saved successfully")
+                Log.d(
+                    "CineverseDataStore",
+                    "Login state saved successfully: ${_authUiState.value.isLoggedIn}"
+                )
                 _authUiState.update { it.copy(isLoggedIn = true) }
+
+// get the session id
+                val sessionId = authRepository.getSessionId(
+                    client = client,
+                    requestToken = _authUiState.value.accessToken.toString()
+                )
+
+                if (sessionId is Result.Success) {
+                    _authUiState.update {
+                        it.copy(
+                            sessionId = sessionId.data.sessionId
+                        )
+                    }
+
+                    authStorage.saveSessionData(sessionId = sessionId.data.sessionId)
+                    Log.d("CineverseDataStore", "sessionId saved : ${authStorage.getSessionId()}")
+                }
             }
             if (_loginResponse.value is Result.Error) {
                 authStorage.saveLoginState(false)
-                Log.d("cineverse dataStore", (_loginResponse.value as Result.Error).message)
+                Log.d("CineverseDataStore", (_loginResponse.value as Result.Error).message)
                 _authUiState.update { it.copy(isLoggedIn = false) }
             }
         }
@@ -111,10 +130,10 @@ class LoginViewModel @Inject constructor(
                 val guestSessionId = guestSessionResponse.data.guestSessionId
                 _authUiState.update {
                     it.copy(
-                        guestSessionId = guestSessionId
+                        sessionId = guestSessionId
                     )
                 }
-                authStorage.saveGuestSessionId(guestSessionId)
+                authStorage.saveSessionData(sessionId = guestSessionId)
             }
         }
     }

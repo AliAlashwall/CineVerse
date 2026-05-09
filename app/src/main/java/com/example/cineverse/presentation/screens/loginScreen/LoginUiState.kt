@@ -6,7 +6,7 @@ data class LoginUiState(
     val password: String = "",
     val accessToken: String? = null,
     val isLoggedIn: Boolean? = null,
-    val guestSessionId: String? = null,
+    val sessionId: String? = null,
     val viewModelLoading: Boolean = true,
     val showResetPSBottomSheet: Boolean = false,
     val showSignUpBottomSheet: Boolean = false

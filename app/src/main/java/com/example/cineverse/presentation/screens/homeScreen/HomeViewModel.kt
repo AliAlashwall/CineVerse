@@ -43,7 +43,7 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             _homeUiState.update {
                 it.copy(
-                    guestId = authStorage.getGuestSessionId()
+                    guestId = authStorage.getSessionId()
                 )
             }
         }
@@ -113,9 +113,5 @@ class HomeViewModel @Inject constructor(
             Result.Loading -> null
             Result.Empty -> emptyList()
         }
-    }
-
-    fun getGuestMovies() {
-
     }
 }
