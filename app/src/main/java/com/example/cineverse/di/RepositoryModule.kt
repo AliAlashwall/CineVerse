@@ -1,7 +1,9 @@
 package com.example.cineverse.di
 
+import com.example.cineverse.data.remote.repository.AccountRepositoryImpl
 import com.example.cineverse.data.remote.repository.AuthRepositoryImpl
 import com.example.cineverse.data.remote.repository.MoviesRepositoryImpl
+import com.example.cineverse.domain.repository.AccountRepository
 import com.example.cineverse.domain.repository.AuthRepository
 import com.example.cineverse.domain.repository.MoviesRepository
 import dagger.Module
@@ -24,4 +26,11 @@ class RepositoryModule {
     fun provideMoviesRepository(impl: MoviesRepositoryImpl): MoviesRepository {
         return impl
     }
+
+    @Provides
+    @Singleton
+    fun provideAccountRepository(impl: AccountRepositoryImpl): AccountRepository {
+        return impl
+    }
+
 }
