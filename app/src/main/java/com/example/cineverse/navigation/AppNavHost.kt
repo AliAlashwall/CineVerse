@@ -21,6 +21,7 @@ import com.example.cineverse.presentation.screens.movieDetailsScreen.MovieDetail
 import com.example.cineverse.presentation.screens.movieDetailsScreen.MovieDetailsViewModel
 import com.example.cineverse.presentation.screens.onBoardingScreen.OnBoardingScreen
 import com.example.cineverse.presentation.screens.profileScreen.ProfileScreen
+import com.example.cineverse.presentation.screens.profileScreen.ProfileViewModel
 
 
 @Composable
@@ -30,6 +31,7 @@ fun AppNavHost(
     loginViewModel: LoginViewModel,
     homeViewModel: HomeViewModel,
     cineVerseViewModel: CineVerseViewModel,
+    profileViewModel: ProfileViewModel
 ) {
     val isOnBoardingCompleted by cineVerseViewModel.isOnBoardingCompleted.collectAsStateWithLifecycle()
     val authUiState by loginViewModel.authUiState.collectAsStateWithLifecycle()
@@ -76,7 +78,7 @@ fun AppNavHost(
             MatchScreen()
         }
         composable<ProfileRoute> {
-            ProfileScreen()
+            ProfileScreen(profileViewModel = profileViewModel)
         }
         composable<EmptyRoute> {
             EmptyScreen()

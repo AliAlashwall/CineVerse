@@ -27,6 +27,7 @@ import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
 import com.example.cineverse.presentation.designSystem.theme.Theme
 import com.example.cineverse.presentation.screens.homeScreen.HomeViewModel
 import com.example.cineverse.presentation.screens.loginScreen.LoginViewModel
+import com.example.cineverse.presentation.screens.profileScreen.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -49,6 +50,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val loginViewModel: LoginViewModel = hiltViewModel()
             val homeViewModel: HomeViewModel = hiltViewModel()
+            val profileViewModel: ProfileViewModel = hiltViewModel()
 
             val navController = rememberNavController()
             val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -73,6 +75,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding),
                         loginViewModel = loginViewModel,
                         homeViewModel = homeViewModel,
+                        profileViewModel = profileViewModel,
                         cineVerseViewModel = cineVerseViewModel
                     )
                 }
