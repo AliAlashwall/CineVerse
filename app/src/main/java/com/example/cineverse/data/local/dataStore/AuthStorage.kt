@@ -15,9 +15,8 @@ import javax.inject.Singleton
 
 @Singleton
 class AuthStorage @Inject constructor(
-    @ApplicationContext private val context: Context
+    @param:ApplicationContext private val context: Context
 ) {
-
     private val dataStore = context.dataStore
 
     companion object {
@@ -26,9 +25,9 @@ class AuthStorage @Inject constructor(
 
         val LOGIN_SUCCESSFULLY = booleanPreferencesKey("login_successfully")
 
-        val GUEST_SESSION_ID = stringPreferencesKey("Guest_session_id")
+        val SESSION_ID = stringPreferencesKey("Guest_session_id")
 
-        val GUEST_SESSION_EXPIRY_DAY = stringPreferencesKey("Guest_session_expiry_day")
+        val SESSION_EXPIRY_DAY = stringPreferencesKey("Guest_session_expiry_day")
     }
 
     suspend fun saveAccessToken(
@@ -46,46 +45,34 @@ class AuthStorage @Inject constructor(
     }
 
     suspend fun saveSessionData(
-        sessionExpiryDay: String
+        sessionId: String,
+        sessionExpiryDay: String = "Not Found"
     ) {
         dataStore.edit { prefs ->
-            prefs[GUEST_SESSION_EXPIRY_DAY] = sessionExpiryDay
+            prefs[SESSION_ID] = sessionId
+            prefs[SESSION_EXPIRY_DAY] = sessionExpiryDay
         }
     }
 
-    suspend fun saveGuestSessionId(sessionId: String) {
-        dataStore.edit { it[GUEST_SESSION_ID] = sessionId }
-    }
 
-    suspend fun getGuestSessionId(): String? =
-        dataStore.data.map { it[GUEST_SESSION_ID] }.firstOrNull()
+    suspend fun getSessionId(): String? =
+        dataStore.data.map { it[SESSION_ID] }.firstOrNull()
 
-    suspend fun getLoginState(): Boolean? =
-        dataStore.data.map { it[LOGIN_SUCCESSFULLY] }.firstOrNull()
 
     // In AuthStorage.kt
     val authDataFlow: Flow<Pair<String?, Boolean?>> = dataStore.data
         .catch { emit(emptyPreferences()) }
         .map { prefs ->
-            Pair(prefs[ACCESS_TOKEN], prefs[LOGIN_SUCCESSFULLY])
+            Pair(
+                prefs[ACCESS_TOKEN],
+                prefs[LOGIN_SUCCESSFULLY]
+            )
         }
 
-    val isLoggedInFlow: Flow<Boolean> = dataStore.data
-        .catch { emit(emptyPreferences()) }
-        .map { prefs -> prefs[ACCESS_TOKEN] != null }
 
-    // One-shot reads for the Ktor plugin (suspend, not Flow)
     suspend fun getAccessToken(): String? =
         dataStore.data.map { it[ACCESS_TOKEN] }.firstOrNull()
 
-    suspend fun getAccessTokenExpiryDay(): String? =
-        dataStore.data.map { it[ACCESS_TOKEN_EXPIRY_DAY] }.firstOrNull()
-
-
-    suspend fun isTokenExpired(): Boolean {
-        //TO-DO
-        return false
-    }
 
     suspend fun clearAll() {
         dataStore.edit { it.clear() }

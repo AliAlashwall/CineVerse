@@ -27,7 +27,7 @@ class OnBoardingStorage @Inject constructor(
     suspend fun setOnBoardingCompleted() {
         context.dataStore.edit { pref ->
             pref[onBoardingKey] = true
-            Log.d("cineverse dataStore", "Login state saved successfully")
+            Log.d("CineverseDataStore", "Login state saved successfully")
         }
 
     }
