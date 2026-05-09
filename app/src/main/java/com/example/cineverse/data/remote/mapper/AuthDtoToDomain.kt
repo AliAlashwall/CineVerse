@@ -3,10 +3,11 @@ package com.example.cineverse.data.remote.mapper
 import com.example.cineverse.data.remote.dto.GuestSessionResponseDTO
 import com.example.cineverse.data.remote.dto.login.LoginResponseDTO
 import com.example.cineverse.data.remote.dto.RequestTokenResponseDTO
+import com.example.cineverse.data.remote.dto.SessionIdResponseDto
 import com.example.cineverse.domain.model.GuestSessionResponse
 import com.example.cineverse.domain.model.LoginResponse
+import com.example.cineverse.domain.model.SessionIdResponse
 import com.example.cineverse.domain.model.TokenResponse
-
 
 
 fun RequestTokenResponseDTO.toDomain() = TokenResponse(
@@ -25,4 +26,10 @@ fun GuestSessionResponseDTO.toDomain() = GuestSessionResponse(
     expiresAt = expiresAt,
     guestSessionId = guestSessionId,
     success = success
+)
+
+
+fun SessionIdResponseDto.toDomain() = SessionIdResponse(
+    sessionId = this.sessionId,
+    success = this.success
 )
