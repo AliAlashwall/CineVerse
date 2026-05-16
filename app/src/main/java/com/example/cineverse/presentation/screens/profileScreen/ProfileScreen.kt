@@ -118,7 +118,7 @@ private fun ProfileScreenPreview() {
     CineVerseTheme {
         ProfileScreenContainer(
             name = "Ali Gamal",
-            userName = "@aligamal_23",
+            userName = "@aligamal",
             image = ""
         )
 
