@@ -27,7 +27,7 @@ fun CineVerseLoading(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(showSystemUi = true, showBackground = true, backgroundColor = 0xFF3F0505)
+@Preview(showSystemUi = true)
 @Composable
 private fun CineVerseLoadingPreview() {
     CineVerseTheme { CineVerseLoading() }

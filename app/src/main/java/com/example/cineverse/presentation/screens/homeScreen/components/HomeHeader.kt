@@ -1,5 +1,6 @@
 package com.example.cineverse.presentation.screens.homeScreen.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +23,7 @@ import com.example.cineverse.presentation.designSystem.theme.Theme
 @Composable
 fun HomeHeader(
     userName: String,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -37,7 +39,8 @@ fun HomeHeader(
             tint = Color.Unspecified
         )
         Spacer(modifier = Modifier.width(8.dp))
-        Column {
+        Column(
+            modifier = Modifier.clickable { onClick() }) {
             Text(
                 text = stringResource(id = R.string.welcome),
                 style = Theme.textStyle.bodySmRegular,

@@ -17,6 +17,7 @@ import com.example.cineverse.R
 import com.example.cineverse.domain.model.Movie
 import com.example.cineverse.domain.model.mockMoviesList
 import com.example.cineverse.navigation.MovieDetailsRoute
+import com.example.cineverse.navigation.ProfileRoute
 import com.example.cineverse.presentation.components.CineVerseErrorScreen
 import com.example.cineverse.presentation.components.CineVerseLoading
 import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
@@ -44,6 +45,7 @@ fun HomeScreen(
             HomeScreenContainer(
                 modifier = modifier,
                 onMovieClicked = { navController.navigate(MovieDetailsRoute(movieId = it.id)) },
+                onHeaderClicked = { navController.navigate(ProfileRoute) },
                 userName = homeUiState.userName,
                 upComingMovies = homeUiState.upcomingMovies,
                 topRatedMovies = homeUiState.topRatedMovies,
@@ -68,6 +70,7 @@ fun HomeScreen(
 fun HomeScreenContainer(
     modifier: Modifier = Modifier,
     onMovieClicked: (Movie) -> Unit,
+    onHeaderClicked: () -> Unit,
     userName: String,
     upComingMovies: List<Movie>,
     topRatedMovies: List<Movie>,
@@ -82,7 +85,7 @@ fun HomeScreenContainer(
         contentPadding = PaddingValues(bottom = 24.dp)
     ) {
         item {
-            HomeHeader(userName = userName)
+            HomeHeader(userName = userName, onClick = { onHeaderClicked() })
         }
 
         if (upComingMovies.isNotEmpty()) {
@@ -100,7 +103,7 @@ fun HomeScreenContainer(
                 SuggestedSection(
                     title = stringResource(id = R.string.recently_released),
                     moviesList = nowPlayingMovies,
-                    onMovieClicked = {onMovieClicked(it)}
+                    onMovieClicked = { onMovieClicked(it) }
                 )
             }
         }
@@ -111,7 +114,7 @@ fun HomeScreenContainer(
                 SuggestedSection(
                     title = stringResource(R.string.upcoming_movies),
                     moviesList = upComingMovies,
-                    onMovieClicked = {onMovieClicked(it)}
+                    onMovieClicked = { onMovieClicked(it) }
                 )
             }
         }
@@ -122,7 +125,7 @@ fun HomeScreenContainer(
                 SuggestedSection(
                     title = stringResource(R.string.matches_your_vibe),
                     moviesList = popularMovies,
-                    onMovieClicked = {onMovieClicked(it)}
+                    onMovieClicked = { onMovieClicked(it) }
                 )
             }
         }
@@ -133,7 +136,7 @@ fun HomeScreenContainer(
                 SuggestedSection(
                     title = stringResource(R.string.top_rated_tv_shows),
                     moviesList = topRatedMovies,
-                    onMovieClicked = {onMovieClicked(it)}
+                    onMovieClicked = { onMovieClicked(it) }
                 )
             }
         }
@@ -144,7 +147,7 @@ fun HomeScreenContainer(
                 SuggestedSection(
                     title = stringResource(R.string.you_recently_viewed),
                     moviesList = popularMovies,
-                    onMovieClicked = {onMovieClicked(it)}
+                    onMovieClicked = { onMovieClicked(it) }
                 )
             }
         }
@@ -163,6 +166,7 @@ private fun HomeScreenPreview() {
             topRatedMovies = mockMoviesList,
             nowPlayingMovies = mockMoviesList,
             popularMovies = mockMoviesList,
+            onHeaderClicked = {}
         )
     }
 }
