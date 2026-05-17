@@ -30,7 +30,9 @@ import com.example.cineverse.presentation.screens.profileScreen.components.UserC
 @Composable
 fun ProfileScreen(
     modifier: Modifier = Modifier,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    isDark: Boolean,
+    onSwitchClicked: (Boolean) -> Unit
 ) {
 
     val profileUiState by profileViewModel.profileUiState.collectAsStateWithLifecycle()
@@ -40,6 +42,8 @@ fun ProfileScreen(
         name = profileUiState.name ?: "",
         userName = profileUiState.userName ?: "",
         image = profileUiState.avatarPath ?: profileUiState.gravatar,
+        isDark = isDark,
+        onSwitchClicked = { onSwitchClicked(it) }
     )
 }
 
@@ -49,6 +53,8 @@ fun ProfileScreenContainer(
     name: String,
     userName: String,
     image: String,
+    isDark: Boolean,
+    onSwitchClicked: (Boolean) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -103,7 +109,10 @@ fun ProfileScreenContainer(
         )
         Spacer(Modifier.height(12.dp))
 
-        SettingsContainer()
+        SettingsContainer(
+            isDark = isDark,
+            onSwitchClicked = { onSwitchClicked(it) }
+        )
 
     }
 }
@@ -119,7 +128,9 @@ private fun ProfileScreenPreview() {
         ProfileScreenContainer(
             name = "Ali Gamal",
             userName = "@aligamal",
-            image = ""
+            image = "",
+            isDark = true,
+            onSwitchClicked = {}
         )
 
     }

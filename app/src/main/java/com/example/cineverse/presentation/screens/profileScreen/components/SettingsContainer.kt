@@ -21,22 +21,27 @@ import com.example.cineverse.R
 import com.example.cineverse.presentation.designSystem.theme.Theme
 
 @Composable
-fun SettingsContainer() {
+fun SettingsContainer(
+    isDark: Boolean,
+    onSwitchClicked: (Boolean) -> Unit
+) {
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(16.dp))
             .background(Theme.colors.backgroundCard)
             .fillMaxWidth()
     ) {
-        Column(Modifier.padding( horizontal = 16.dp)) {
+        Column(Modifier.padding(horizontal = 16.dp)) {
 
             SettingsItem(
                 icon = R.drawable.due_tone_moon,
                 text = stringResource(R.string.dark_mode),
                 content = {
                     Switch(
-                        checked = Theme.state.isDark,
-                        onCheckedChange = { },
+                        checked = isDark,
+                        onCheckedChange = { newValue ->
+                            onSwitchClicked(newValue)
+                        },
                         colors = SwitchDefaults.colors(
                             checkedTrackColor = Theme.colors.brandPrimary,
                             uncheckedTrackColor = Theme.colors.shadePrimary

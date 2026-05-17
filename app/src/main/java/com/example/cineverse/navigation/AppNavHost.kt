@@ -1,5 +1,6 @@
 package com.example.cineverse.navigation
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -36,6 +37,10 @@ fun AppNavHost(
     val isOnBoardingCompleted by cineVerseViewModel.isOnBoardingCompleted.collectAsStateWithLifecycle()
     val authUiState by loginViewModel.authUiState.collectAsStateWithLifecycle()
     val isLoggedIn = authUiState.isLoggedIn
+    val isDarkStored by cineVerseViewModel.isDarkTheme.collectAsStateWithLifecycle()
+    
+    // Consistently fall back to system theme if no preference is stored/loaded yet
+    val isDark = isDarkStored ?: isSystemInDarkTheme()
 
 
     val startDestination = when {
@@ -78,14 +83,19 @@ fun AppNavHost(
             MatchScreen()
         }
         composable<ProfileRoute> {
-            ProfileScreen(profileViewModel = profileViewModel)
+            ProfileScreen(
+                profileViewModel = profileViewModel,
+                isDark = isDark,
+                onSwitchClicked = { isDarkValue ->
+                    cineVerseViewModel.setAppTheme(isDarkValue)
+                }
+            )
         }
         composable<EmptyRoute> {
             EmptyScreen()
         }
 
         composable<MovieDetailsRoute> { backStackEntry ->
-            // To ensure  it is only created when the navigation destination is active and the required arguments are available.
             val movieDetailsViewModel: MovieDetailsViewModel = hiltViewModel()
 
             val arg = backStackEntry.toRoute<MovieDetailsRoute>()
