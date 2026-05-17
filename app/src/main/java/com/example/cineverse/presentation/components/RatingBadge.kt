@@ -11,7 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -24,7 +23,7 @@ fun RatingBadge(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        color = Color.Black.copy(alpha = 0.6f),
+        color = Theme.colors.backgroundCard,
         shape = RoundedCornerShape(12.dp),
         modifier = modifier
     ) {
