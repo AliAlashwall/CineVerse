@@ -1,7 +1,6 @@
 package com.example.cineverse.data.local.dataStore
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -11,13 +10,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class OnBoardingStorage @Inject constructor(
-    @ApplicationContext private val context: Context
+class AppStorage @Inject constructor(
+    @param:ApplicationContext private val context: Context
 ) {
 
     private val onBoardingKey = booleanPreferencesKey("onboarding_completed")
+    private val isDarkThemeKey = booleanPreferencesKey("theme_mode")
 
-    // if it still null, so this mean it's the first time so return false
     fun isOnBoardingCompleted(): Flow<Boolean> {
         return context.dataStore.data.map { pref ->
             pref[onBoardingKey] ?: false
@@ -27,8 +26,18 @@ class OnBoardingStorage @Inject constructor(
     suspend fun setOnBoardingCompleted() {
         context.dataStore.edit { pref ->
             pref[onBoardingKey] = true
-            Log.d("CineverseDataStore", "Login state saved successfully")
         }
+    }
 
+    fun getSavedTheme(): Flow<Boolean?> {
+        return context.dataStore.data.map { preferences ->
+            preferences[isDarkThemeKey]
+        }
+    }
+
+    suspend fun setAppTheme(isDark: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[isDarkThemeKey] = isDark
+        }
     }
 }
