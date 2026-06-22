@@ -49,7 +49,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun loadMovies() {
+     fun loadMovies() {
         viewModelScope.launch(Dispatchers.IO) {
             _homeEvent.value = HomeEvent.Loading
             try {

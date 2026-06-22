@@ -56,7 +56,7 @@ fun HomeScreen(
 
         HomeEvent.Error -> {
             CineVerseErrorScreen(
-                onTryAgain = {}
+                onTryAgain = {homeViewModel.loadMovies()}
             )
         }
 
