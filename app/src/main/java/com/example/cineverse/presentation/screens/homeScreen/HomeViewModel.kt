@@ -4,9 +4,12 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cineverse.data.local.dataStore.AuthStorage
-import com.example.cineverse.domain.model.Movie
 import com.example.cineverse.domain.repository.MoviesRepository
 import com.example.cineverse.domain.util.Result
+import com.example.cineverse.domain.util.getNowPlayingMovies
+import com.example.cineverse.domain.util.getPopularMovies
+import com.example.cineverse.domain.util.getTopRatedMovies
+import com.example.cineverse.domain.util.getUpComingMovies
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.Dispatchers
@@ -21,16 +24,18 @@ import javax.inject.Inject
 sealed class HomeEvent {
     object Loading : HomeEvent()
     object Success : HomeEvent()
-    object Error : HomeEvent()
+    data class Error(val errorMessage: String, val errorType: ErrorType = ErrorType.UNKNOWN) : HomeEvent()
 }
 
+enum class ErrorType {
+    NETWORK, TIMEOUT, SERVER, PARSING, UNKNOWN
+}
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val client: HttpClient,
     private val moviesRepository: MoviesRepository,
     private val authStorage: AuthStorage
-
 ) : ViewModel() {
     private val _homeEvent = MutableStateFlow<HomeEvent>(HomeEvent.Loading)
     val homeEvent = _homeEvent.asStateFlow()
@@ -49,69 +54,80 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-     fun loadMovies() {
+    fun loadMovies() {
         viewModelScope.launch(Dispatchers.IO) {
             _homeEvent.value = HomeEvent.Loading
             try {
                 coroutineScope {
-                    val upcomingDeferred =
-                        async { getMovies { moviesRepository.getUpComingMovies(client) } }
-                    val topRatedDeferred =
-                        async { getMovies { moviesRepository.getTopRatedMovies(client) } }
-                    val popularDeferred =
-                        async { getMovies { moviesRepository.getPopularMovies(client) } }
-                    val nowPlayingDeferred =
-                        async { getMovies { moviesRepository.getNowPlayingMovies(client) } }
+                    val upcomingDeferred = async { moviesRepository.getUpComingMovies(client) }
+                    val topRatedDeferred = async { moviesRepository.getTopRatedMovies(client) }
+                    val popularDeferred = async { moviesRepository.getPopularMovies(client) }
+                    val nowPlayingDeferred = async { moviesRepository.getNowPlayingMovies(client) }
 
-                    val upcoming = upcomingDeferred.await()
-                    val topRated = topRatedDeferred.await()
-                    val popular = popularDeferred.await()
-                    val nowPlaying = nowPlayingDeferred.await()
+                    val upcomingResult = upcomingDeferred.await()
+                    val topRatedResult = topRatedDeferred.await()
+                    val popularResult = popularDeferred.await()
+                    val nowPlayingResult = nowPlayingDeferred.await()
+
+                    val upcoming = upcomingResult.getUpComingMovies() ?: emptyList()
+                    val topRated = topRatedResult.getTopRatedMovies() ?: emptyList()
+                    val popular = popularResult.getPopularMovies() ?: emptyList()
+                    val nowPlaying = nowPlayingResult.getNowPlayingMovies() ?: emptyList()
 
                     _homeUiState.update {
                         it.copy(
-                            upcomingMovies = upcoming ?: emptyList(),
-                            topRatedMovies = topRated ?: emptyList(),
-                            popularMovies = popular ?: emptyList(),
-                            nowPlayingMovies = nowPlaying ?: emptyList()
+                            upcomingMovies = upcoming,
+                            topRatedMovies = topRated,
+                            popularMovies = popular,
+                            nowPlayingMovies = nowPlaying
                         )
                     }
 
-                    // Check if all fetches succeeded (non-null means success)
-                    if (upcoming != null && topRated != null && popular != null && nowPlaying != null) {
+                    // Check if all requests succeeded
+                    if (upcomingResult is Result.Success && 
+                        topRatedResult is Result.Success && 
+                        popularResult is Result.Success && 
+                        nowPlayingResult is Result.Success) {
                         _homeEvent.value = HomeEvent.Success
                     } else {
-                        _homeEvent.value = HomeEvent.Error
+                        // Get the first error encountered
+                        val error = when {
+                            upcomingResult is Result.Error -> upcomingResult
+                            topRatedResult is Result.Error -> topRatedResult
+                            popularResult is Result.Error -> popularResult
+                            nowPlayingResult is Result.Error -> nowPlayingResult
+                            else -> null
+                        }
+
+                        if (error != null) {
+                            _homeEvent.value = mapErrorToEvent(error)
+                        }
                     }
                 }
             } catch (e: Exception) {
                 Log.e("HomeViewModel", "Error loading movies", e)
-                _homeEvent.value = HomeEvent.Error
+                _homeEvent.value = HomeEvent.Error("An unexpected error occurred. Please try again.")
             }
         }
     }
 
-    private suspend fun getMovies(fetch: suspend () -> Result<*>): List<Movie>? {
-        return when (val result = fetch()) {
-            is Result.Success -> {
-                val data = result.data
-                try {
-                    val field = data!!::class.java.getDeclaredField("resultedMovies")
-                    field.isAccessible = true
-                    field.get(data) as? List<Movie>
-                } catch (e: Exception) {
-                    Log.e("HomeViewModel", "Error fetching movies", e)
-                    null
-                }
+    private fun mapErrorToEvent(error: Result.Error): HomeEvent.Error {
+        return when (error) {
+            is Result.Error.NetworkError -> {
+                HomeEvent.Error(error.message, ErrorType.NETWORK)
             }
-
-            is Result.Error -> {
-                Log.e("HomeViewModel", "Error fetching movies: ${result.message}")
-                null
+            is Result.Error.TimeoutError -> {
+                HomeEvent.Error(error.message, ErrorType.TIMEOUT)
             }
-
-            Result.Loading -> null
-            Result.Empty -> emptyList()
+            is Result.Error.ServerError -> {
+                HomeEvent.Error(error.message, ErrorType.SERVER)
+            }
+            is Result.Error.ParsingError -> {
+                HomeEvent.Error(error.message, ErrorType.PARSING)
+            }
+            is Result.Error.UnknownError -> {
+                HomeEvent.Error(error.message, ErrorType.UNKNOWN)
+            }
         }
     }
 }
