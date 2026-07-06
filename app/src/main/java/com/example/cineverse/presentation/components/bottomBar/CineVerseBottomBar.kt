@@ -23,6 +23,7 @@ import com.example.cineverse.navigation.ExploreRoute
 import com.example.cineverse.navigation.HomeRoute
 import com.example.cineverse.navigation.MatchRoute
 import com.example.cineverse.navigation.ProfileRoute
+import com.example.cineverse.navigation.NavActions
 import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
 import com.example.cineverse.presentation.designSystem.theme.Theme
 
@@ -31,7 +32,8 @@ import com.example.cineverse.presentation.designSystem.theme.Theme
 @Composable
 fun CineVerseBottomBar(
     modifier: Modifier = Modifier,
-    navController: NavController
+    navController: NavController,
+    navActions: NavActions
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination
@@ -51,9 +53,7 @@ fun CineVerseBottomBar(
             label = stringResource(id = R.string.home),
             isSelected = currentRoute?.hasRoute(HomeRoute::class) == true,
             onClick = {
-                navController.navigate(HomeRoute) {
-                    launchSingleTop = true   // to avoid duplicated nav
-                }
+                navActions.navigateToHomeAsBottom()
             }
         )
         BottomNavItem(
@@ -62,9 +62,7 @@ fun CineVerseBottomBar(
             label = stringResource(id = R.string.explore),
             isSelected = currentRoute?.hasRoute(ExploreRoute::class) == true,
             onClick = {
-                navController.navigate(ExploreRoute) {
-                    launchSingleTop = true   // to avoid duplicated nav
-                }
+                navActions.navigateToExplore()
             }
         )
         BottomNavItem(
@@ -73,9 +71,7 @@ fun CineVerseBottomBar(
             label = stringResource(id = R.string.match),
             isSelected = currentRoute?.hasRoute(MatchRoute::class) == true,
             onClick = {
-                navController.navigate(MatchRoute) {
-                    launchSingleTop = true   // to avoid duplicated nav
-                }
+                navActions.navigateToMatch()
             }
         )
         BottomNavItem(
@@ -84,9 +80,7 @@ fun CineVerseBottomBar(
             label = stringResource(id = R.string.me),
             isSelected = currentRoute?.hasRoute(ProfileRoute::class) == true,
             onClick = {
-                navController.navigate(ProfileRoute) {
-                    launchSingleTop = true   // to avoid duplicated nav
-                }
+                navActions.navigateToProfile()
             }
         )
     }
@@ -97,8 +91,10 @@ fun CineVerseBottomBar(
 private fun BottomBarPreview() {
     CineVerseTheme {
         val navController = rememberNavController()
+        val navActions = NavActions(navController)
         CineVerseBottomBar(
-            navController = navController
+            navController = navController,
+            navActions = navActions
         )
     }
 }

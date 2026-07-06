@@ -23,13 +23,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.example.cineverse.R
 import com.example.cineverse.domain.model.Cast
 import com.example.cineverse.domain.model.Movie
 import com.example.cineverse.domain.model.Review
 import com.example.cineverse.domain.model.mockCastList
-import com.example.cineverse.navigation.MovieDetailsRoute
+import com.example.cineverse.navigation.NavActions
 import com.example.cineverse.presentation.components.MoviePoster
 import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
 import com.example.cineverse.presentation.designSystem.theme.Theme
@@ -45,7 +44,7 @@ import com.example.cineverse.util.toRuntimeFormat
 fun MovieDetailsScreen(
     movieDetailsViewModel: MovieDetailsViewModel,
     movieId: Int,
-    navController: NavController,
+    navActions: NavActions,
     onAddClicked: () -> Unit = {},
     onPlayClicked: () -> Unit = {}
 ) {
@@ -57,7 +56,7 @@ fun MovieDetailsScreen(
 
 
     MovieDetailsContainer(
-        onBackClicked = { navController.popBackStack() },
+        onBackClicked = { navActions.navigateUp() },
         onPlayClicked = { onPlayClicked() },
         onAddClicked = { onAddClicked() },
         posterPath = movieUiState.movieDetails?.posterPath,
@@ -71,7 +70,7 @@ fun MovieDetailsScreen(
         castList = movieUiState.movieDetails?.credits?.cast ?: emptyList(),
         moviesList = movieUiState.popularMovies,
         onMovieClicked = { movie ->
-            navController.navigate(MovieDetailsRoute(movie.id))
+            navActions.openMovieDetails(movie.id)
         },
         reviewsList = movieUiState.movieDetails?.reviews ?: emptyList()
     )

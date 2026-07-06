@@ -12,12 +12,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.example.cineverse.R
 import com.example.cineverse.domain.model.Movie
 import com.example.cineverse.domain.model.mockMoviesList
-import com.example.cineverse.navigation.MovieDetailsRoute
-import com.example.cineverse.navigation.ProfileRoute
 import com.example.cineverse.presentation.components.CineVerseErrorScreen
 import com.example.cineverse.presentation.components.CineVerseLoading
 import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
@@ -29,8 +26,9 @@ import com.example.cineverse.presentation.screens.homeScreen.components.Suggeste
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    navController: NavController,
-    homeViewModel: HomeViewModel
+    homeViewModel: HomeViewModel,
+    onMovieClicked: (Movie) -> Unit,
+    onHeaderClicked: () -> Unit
 ) {
     val homeUiState by homeViewModel.homeUiState.collectAsStateWithLifecycle()
     val homeEvent by homeViewModel.homeEvent.collectAsStateWithLifecycle()
@@ -44,8 +42,8 @@ fun HomeScreen(
         HomeEvent.Success -> {
             HomeScreenContainer(
                 modifier = modifier,
-                onMovieClicked = { navController.navigate(MovieDetailsRoute(movieId = it.id)) },
-                onHeaderClicked = { navController.navigate(ProfileRoute) },
+                onMovieClicked = onMovieClicked,
+                onHeaderClicked = onHeaderClicked,
                 userName = homeUiState.userName,
                 upComingMovies = homeUiState.upcomingMovies,
                 topRatedMovies = homeUiState.topRatedMovies,
@@ -54,13 +52,12 @@ fun HomeScreen(
             )
         }
 
-        HomeEvent.Error(errorMessage = "An unexpected error occurred. Please try again.") -> {
+        is HomeEvent.Error -> {
             CineVerseErrorScreen(
                 onTryAgain = {homeViewModel.loadMovies()}
             )
         }
 
-        else -> {}
     }
 
 

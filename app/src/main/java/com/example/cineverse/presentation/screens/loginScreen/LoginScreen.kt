@@ -47,10 +47,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.example.cineverse.R
 import com.example.cineverse.domain.util.Result
-import com.example.cineverse.navigation.HomeRoute
+import com.example.cineverse.navigation.NavActions
 import com.example.cineverse.presentation.components.CineVerseBottomSheet
 import com.example.cineverse.presentation.components.CineVerseLoading
 import com.example.cineverse.presentation.components.CustomButton
@@ -62,7 +61,7 @@ import com.example.cineverse.presentation.designSystem.theme.Theme
 fun LoginScreen(
     loginViewModel: LoginViewModel,
     modifier: Modifier = Modifier,
-    navController: NavController
+    navActions: NavActions
 ) {
     val authUiState by loginViewModel.authUiState.collectAsStateWithLifecycle()
 
@@ -89,7 +88,7 @@ fun LoginScreen(
 
             is Result.Success -> {
                 //navigate to home
-                navController.navigate(HomeRoute)
+                navActions.navigateToHome()
             }
 
             is Result.Error -> {
