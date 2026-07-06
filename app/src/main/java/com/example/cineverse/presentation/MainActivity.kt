@@ -11,9 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.CineVerseViewModel
@@ -22,14 +23,11 @@ import com.example.cineverse.navigation.ExploreRoute
 import com.example.cineverse.navigation.HomeRoute
 import com.example.cineverse.navigation.MatchRoute
 import com.example.cineverse.navigation.ProfileRoute
-import com.example.cineverse.navigation.NavActions
 import com.example.cineverse.presentation.components.bottomBar.CineVerseBottomBar
 import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
 import com.example.cineverse.presentation.designSystem.theme.Theme
-import dagger.hilt.android.AndroidEntryPoint
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavDestination.Companion.hasRoute
 import com.example.cineverse.presentation.designSystem.theme.rememberThemeState
+import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -59,7 +57,6 @@ class MainActivity : ComponentActivity() {
             if (!isThemeLoaded || isOnBoardingCompleted == null) return@setContent
 
             val navController = rememberNavController()
-            val navActions = remember(navController) { NavActions(navController) }
 
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val bottomBarScreens = listOf(HomeRoute, ExploreRoute, MatchRoute, ProfileRoute)
@@ -76,13 +73,12 @@ class MainActivity : ComponentActivity() {
                     containerColor = Theme.colors.backgroundScreen,
                     bottomBar = {
                         if (showBottomBar) {
-                            CineVerseBottomBar(navController = navController, navActions = navActions)
+                            CineVerseBottomBar(navController = navController)
                         }
                     }
                 ) { innerPadding ->
                     AppNavHost(
                         navController = navController,
-                        navActions = navActions,
                         modifier = Modifier.padding(innerPadding),
                         cineVerseViewModel = cineVerseViewModel
                     )

@@ -1,5 +1,7 @@
 package com.example.cineverse.presentation.screens.homeScreen
 
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -7,7 +9,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,6 +29,8 @@ import com.example.cineverse.presentation.designSystem.theme.Theme
 import com.example.cineverse.presentation.screens.homeScreen.components.HomeHeader
 import com.example.cineverse.presentation.screens.homeScreen.components.HomeHeaderCarousel
 import com.example.cineverse.presentation.screens.homeScreen.components.SuggestedSection
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
@@ -30,6 +39,23 @@ fun HomeScreen(
     onMovieClicked: (Movie) -> Unit,
     onHeaderClicked: () -> Unit
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var backPressedOnce by remember { mutableStateOf(false) }
+
+    BackHandler(enabled = !backPressedOnce) {
+        backPressedOnce = true
+        Toast.makeText(
+            context,
+            "press back again to exit",
+            Toast.LENGTH_SHORT
+        ).show()
+
+        scope.launch {
+            delay(2000)
+            backPressedOnce = false
+        }
+    }
     val homeUiState by homeViewModel.homeUiState.collectAsStateWithLifecycle()
     val homeEvent by homeViewModel.homeEvent.collectAsStateWithLifecycle()
 
@@ -54,7 +80,7 @@ fun HomeScreen(
 
         is HomeEvent.Error -> {
             CineVerseErrorScreen(
-                onTryAgain = {homeViewModel.loadMovies()}
+                onTryAgain = { homeViewModel.loadMovies() }
             )
         }
 

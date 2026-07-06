@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun OnBoardingScreen(
-    onGetStartedClicked: () -> Unit
+    onGetStartedClicked: () -> Unit,
 ) {
     val pagesList = listOf(
         Triple(

@@ -28,7 +28,6 @@ import com.example.cineverse.domain.model.Cast
 import com.example.cineverse.domain.model.Movie
 import com.example.cineverse.domain.model.Review
 import com.example.cineverse.domain.model.mockCastList
-import com.example.cineverse.navigation.NavActions
 import com.example.cineverse.presentation.components.MoviePoster
 import com.example.cineverse.presentation.designSystem.theme.CineVerseTheme
 import com.example.cineverse.presentation.designSystem.theme.Theme
@@ -44,9 +43,10 @@ import com.example.cineverse.util.toRuntimeFormat
 fun MovieDetailsScreen(
     movieDetailsViewModel: MovieDetailsViewModel,
     movieId: Int,
-    navActions: NavActions,
     onAddClicked: () -> Unit = {},
-    onPlayClicked: () -> Unit = {}
+    onPlayClicked: () -> Unit = {},
+    onBackClicked: () -> Unit = { },
+    openMovieDetailsById: (Int) -> Unit = { }
 ) {
     LaunchedEffect(Unit) {
         movieDetailsViewModel.getMovieDetails(movieId)
@@ -56,7 +56,7 @@ fun MovieDetailsScreen(
 
 
     MovieDetailsContainer(
-        onBackClicked = { navActions.navigateUp() },
+        onBackClicked = { onBackClicked() },
         onPlayClicked = { onPlayClicked() },
         onAddClicked = { onAddClicked() },
         posterPath = movieUiState.movieDetails?.posterPath,
@@ -70,7 +70,7 @@ fun MovieDetailsScreen(
         castList = movieUiState.movieDetails?.credits?.cast ?: emptyList(),
         moviesList = movieUiState.popularMovies,
         onMovieClicked = { movie ->
-            navActions.openMovieDetails(movie.id)
+            openMovieDetailsById(movie.id)
         },
         reviewsList = movieUiState.movieDetails?.reviews ?: emptyList()
     )

@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.example.CineVerseViewModel
+import com.example.cineverse.navigation.util.navigateToProfile
 import com.example.cineverse.presentation.screens.EmptyScreen
 import com.example.cineverse.presentation.screens.exploreScreen.ExploreScreen
 import com.example.cineverse.presentation.screens.homeScreen.HomeScreen
@@ -29,12 +30,11 @@ import com.example.cineverse.presentation.screens.profileScreen.ProfileViewModel
 fun AppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    navActions: NavActions,
     cineVerseViewModel: CineVerseViewModel
 ) {
     val isOnBoardingCompleted by cineVerseViewModel.isOnBoardingCompleted.collectAsStateWithLifecycle()
     val isDarkStored by cineVerseViewModel.isDarkTheme.collectAsStateWithLifecycle()
-    
+
     // Consistently fall back to system theme if no preference is stored/loaded yet
     val isDark = isDarkStored ?: isSystemInDarkTheme()
 
@@ -54,7 +54,10 @@ fun AppNavHost(
             OnBoardingScreen(
                 onGetStartedClicked = {
                     cineVerseViewModel.setOnBoardingCompleted()
-                    navActions.navigateToLogin()
+                    navController.navigate(LoginRoute) {
+                        popUpTo(OnBoardingRoute) { inclusive = true }
+                        launchSingleTop = true
+                    }
                 }
             )
         }
@@ -63,7 +66,12 @@ fun AppNavHost(
             val loginViewModel: LoginViewModel = hiltViewModel(backStackEntry)
             LoginScreen(
                 loginViewModel = loginViewModel,
-                navActions = navActions
+                navigateToHome = {
+                    navController.navigate(HomeRoute) {
+                        popUpTo(LoginRoute) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
             )
         }
 
@@ -72,8 +80,8 @@ fun AppNavHost(
 
             HomeScreen(
                 homeViewModel = homeViewModel,
-                onMovieClicked = { movie -> navActions.openMovieDetails(movie.id) },
-                onHeaderClicked = { navActions.navigateToProfile() }
+                onMovieClicked = { movie -> navController.navigate(MovieDetailsRoute(movie.id)) },
+                onHeaderClicked = { navController.navigateToProfile() }
             )
         }
 
@@ -104,7 +112,8 @@ fun AppNavHost(
             MovieDetailsScreen(
                 movieDetailsViewModel = movieDetailsViewModel,
                 movieId = arg.movieId,
-                navActions = navActions
+                openMovieDetailsById = { movieId -> navController.navigate(MovieDetailsRoute(movieId)) },
+                onBackClicked = { navController.popBackStack() }
             )
         }
 
