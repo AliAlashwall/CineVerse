@@ -6,12 +6,13 @@ import com.example.cineverse.data.remote.dto.SessionIdResponseDto
 import com.example.cineverse.data.remote.dto.login.LoginRequest
 import com.example.cineverse.data.remote.dto.login.LoginResponseDTO
 import com.example.cineverse.data.remote.mapper.toDomain
+import com.example.cineverse.data.remote.util.HttpErrorHandler
 import com.example.cineverse.domain.model.GuestSessionResponse
 import com.example.cineverse.domain.model.LoginResponse
 import com.example.cineverse.domain.model.SessionIdResponse
 import com.example.cineverse.domain.model.TokenResponse
 import com.example.cineverse.domain.repository.AuthRepository
-
+import com.example.cineverse.domain.util.Result
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -20,7 +21,6 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import javax.inject.Inject
-import com.example.cineverse.domain.util.Result
 
 class AuthRepositoryImpl @Inject constructor() : AuthRepository {
     override suspend fun fetchRequestToken(client: HttpClient): Result<TokenResponse> {
@@ -28,7 +28,7 @@ class AuthRepositoryImpl @Inject constructor() : AuthRepository {
             val response = client.get("authentication/token/new").body<RequestTokenResponseDTO>()
             Result.Success(response.toDomain())
         } catch (e: Exception) {
-            Result.Error(e.localizedMessage ?: "An error occurred while fetching request token")
+            HttpErrorHandler.handleException(e, "Failed to fetch authentication token")
         }
     }
 
@@ -46,7 +46,7 @@ class AuthRepositoryImpl @Inject constructor() : AuthRepository {
             }.body<LoginResponseDTO>()
             Result.Success(response.toDomain())
         } catch (e: Exception) {
-            Result.Error(e.localizedMessage ?: "An error occurred while logging in")
+            HttpErrorHandler.handleException(e, "Login failed. Please check your credentials and try again.")
         }
     }
 
@@ -62,7 +62,7 @@ class AuthRepositoryImpl @Inject constructor() : AuthRepository {
 
             Result.Success(response.toDomain())
         } catch (e: Exception) {
-            Result.Error(e.localizedMessage ?: "An error occurred while fetching session ID")
+            HttpErrorHandler.handleException(e, "Failed to create session")
         }
     }
 
@@ -72,7 +72,7 @@ class AuthRepositoryImpl @Inject constructor() : AuthRepository {
                 client.get("authentication/guest_session/new").body<GuestSessionResponseDTO>()
             Result.Success(response.toDomain())
         } catch (e: Exception) {
-            Result.Error(e.localizedMessage ?: "An error occurred while joining as guest")
+            HttpErrorHandler.handleException(e, "Failed to create guest session")
         }
     }
 }

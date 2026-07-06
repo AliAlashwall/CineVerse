@@ -7,6 +7,7 @@ import com.example.cineverse.data.remote.dto.popular.PopularMoviesDTO
 import com.example.cineverse.data.remote.dto.topRated.TopRatedMoviesDto
 import com.example.cineverse.data.remote.dto.upComingDto.UpComingResponseDTO
 import com.example.cineverse.data.remote.mapper.toDomain
+import com.example.cineverse.data.remote.util.HttpErrorHandler
 import com.example.cineverse.domain.model.MovieDetails
 import com.example.cineverse.domain.model.NowPlayingMovies
 import com.example.cineverse.domain.model.PopularMovies
@@ -27,7 +28,7 @@ class MoviesRepositoryImpl @Inject constructor() : MoviesRepository {
             val upComingMovies = client.get("movie/upcoming").body<UpComingResponseDTO>()
             Result.Success(data = upComingMovies.toDomain())
         } catch (e: Exception) {
-            Result.Error(e.localizedMessage ?: "An error occurred while fetching upcoming movies")
+            HttpErrorHandler.handleException(e, "Failed to fetch upcoming movies")
         }
     }
 
@@ -36,7 +37,7 @@ class MoviesRepositoryImpl @Inject constructor() : MoviesRepository {
             val topRatedMovies = client.get("movie/top_rated").body<TopRatedMoviesDto>()
             Result.Success(data = topRatedMovies.toDomain())
         } catch (e: Exception) {
-            Result.Error(e.localizedMessage ?: "An error occurred while fetching top rated movies")
+            HttpErrorHandler.handleException(e, "Failed to fetch top rated movies")
         }
     }
 
@@ -45,11 +46,8 @@ class MoviesRepositoryImpl @Inject constructor() : MoviesRepository {
             val nowPlayingMovies = client.get("movie/now_playing").body<NowPlayingMoviesDTO>()
             Result.Success(data = nowPlayingMovies.toDomain())
         } catch (e: Exception) {
-            Result.Error(
-                e.localizedMessage ?: "An error occurred while fetching now playing movies"
-            )
+            HttpErrorHandler.handleException(e, "Failed to fetch now playing movies")
         }
-
     }
 
     override suspend fun getPopularMovies(client: HttpClient): Result<PopularMovies> {
@@ -57,7 +55,7 @@ class MoviesRepositoryImpl @Inject constructor() : MoviesRepository {
             val popularMovies = client.get("movie/popular").body<PopularMoviesDTO>()
             Result.Success(data = popularMovies.toDomain())
         } catch (e: Exception) {
-            Result.Error(e.localizedMessage ?: "An error occurred while fetching popular movies")
+            HttpErrorHandler.handleException(e, "Failed to fetch popular movies")
         }
     }
 
@@ -67,13 +65,12 @@ class MoviesRepositoryImpl @Inject constructor() : MoviesRepository {
     ): Result<MovieDetails> {
         return try {
             val movieDetails = client.get("movie/$movieId") {
-                // to get the full cast and reviews data with the movie details
                 parameter("append_to_response", "credits,reviews")
             }.body<MovieDetailsDTO>()
-            Log.d("MoviesRepositoryImpl", "Fetched movie details Successfully: $movieDetails")
+            Log.d("MoviesRepositoryImpl", "Fetched movie details successfully for movie ID: $movieId")
             Result.Success(data = movieDetails.toDomain())
         } catch (e: Exception) {
-            Result.Error(e.localizedMessage ?: "An error occurred while fetching movie details")
+            HttpErrorHandler.handleException(e, "Failed to fetch movie details")
         }
     }
 }
