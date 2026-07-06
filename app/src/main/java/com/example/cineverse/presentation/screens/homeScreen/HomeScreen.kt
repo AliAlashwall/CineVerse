@@ -54,12 +54,13 @@ fun HomeScreen(
             )
         }
 
-        HomeEvent.Error -> {
+        HomeEvent.Error(errorMessage = "An unexpected error occurred. Please try again.") -> {
             CineVerseErrorScreen(
                 onTryAgain = {homeViewModel.loadMovies()}
             )
         }
 
+        else -> {}
     }
 
 

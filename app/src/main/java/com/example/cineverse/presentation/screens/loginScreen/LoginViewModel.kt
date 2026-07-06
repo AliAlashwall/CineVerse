@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.cineverse.data.local.dataStore.AuthStorage
 import com.example.cineverse.domain.model.LoginResponse
 import com.example.cineverse.domain.repository.AuthRepository
+import com.example.cineverse.domain.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +17,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import com.example.cineverse.domain.util.Result
 
 @HiltViewModel
 @SuppressLint("StaticFieldLeak")
@@ -35,7 +35,6 @@ class LoginViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            // Collect reactively so the UI stays in sync with storage automatically
             authStorage.authDataFlow.collect { (token, loginState) ->
                 _authUiState.update {
                     it.copy(
@@ -48,13 +47,11 @@ class LoginViewModel @Inject constructor(
     }
 
     private suspend fun getTokenProcess(): String? {
-
-        Log.d("Ktor", "Starting fetch...")
+        Log.d("Ktor", "Starting fetch request token...")
 
         val requestTokenResponse =
             withContext(Dispatchers.IO) { authRepository.fetchRequestToken(client) }
 
-        // Save the tokens to storage!
         if (requestTokenResponse is Result.Success) {
             authStorage.saveAccessToken(
                 accessToken = requestTokenResponse.data.requestToken,
@@ -65,16 +62,22 @@ class LoginViewModel @Inject constructor(
                     accessToken = requestTokenResponse.data.requestToken,
                 )
             }
-            Log.d("Ktor", "Access Token= ${authStorage.getAccessToken()}")
-
+            Log.d("Ktor", "Request token saved successfully")
             return requestTokenResponse.data.requestToken
-        } else return null
+        } else {
+            // Log the specific error
+            if (requestTokenResponse is Result.Error) {
+                Log.e("LoginViewModel", "Failed to fetch token: ${requestTokenResponse.message}")
+            }
+            return null
+        }
     }
 
     fun login() {
         viewModelScope.launch(Dispatchers.IO) {
             _loginResponse.value = Result.Loading
             val accessToken = getTokenProcess()
+            
             if (accessToken != null) {
                 _loginResponse.value = authRepository.login(
                     client = client,
@@ -84,19 +87,15 @@ class LoginViewModel @Inject constructor(
                 )
                 Log.d("Ktor", "Login Response: ${_loginResponse.value}")
             } else {
-                // 4. Handle case where token fetching failed
-                _loginResponse.value = Result.Error("Failed to fetch request token")
+                _loginResponse.value = Result.Error.UnknownError("Failed to fetch request token. Please try again.")
             }
 
             if (_loginResponse.value is Result.Success) {
                 authStorage.saveLoginState(true)
-                Log.d(
-                    "CineverseDataStore",
-                    "Login state saved successfully: ${_authUiState.value.isLoggedIn}"
-                )
+                Log.d("CineverseDataStore", "Login state saved successfully")
                 _authUiState.update { it.copy(isLoggedIn = true) }
 
-// get the session id
+                // Get the session ID
                 val sessionId = authRepository.getSessionId(
                     client = client,
                     requestToken = _authUiState.value.accessToken.toString()
@@ -104,18 +103,17 @@ class LoginViewModel @Inject constructor(
 
                 if (sessionId is Result.Success) {
                     _authUiState.update {
-                        it.copy(
-                            sessionId = sessionId.data.sessionId
-                        )
+                        it.copy(sessionId = sessionId.data.sessionId)
                     }
-
                     authStorage.saveSessionData(sessionId = sessionId.data.sessionId)
-                    Log.d("CineverseDataStore", "sessionId saved : ${authStorage.getSessionId()}")
+                    Log.d("CineverseDataStore", "Session ID saved successfully")
                 }
             }
+            
             if (_loginResponse.value is Result.Error) {
                 authStorage.saveLoginState(false)
-                Log.d("CineverseDataStore", (_loginResponse.value as Result.Error).message)
+                val error = _loginResponse.value as Result.Error
+                Log.e("LoginViewModel", "Login failed: ${error.message}")
                 _authUiState.update { it.copy(isLoggedIn = false) }
             }
         }
@@ -129,28 +127,25 @@ class LoginViewModel @Inject constructor(
             if (guestSessionResponse is Result.Success) {
                 val guestSessionId = guestSessionResponse.data.guestSessionId
                 _authUiState.update {
-                    it.copy(
-                        sessionId = guestSessionId
-                    )
+                    it.copy(sessionId = guestSessionId)
                 }
                 authStorage.saveSessionData(sessionId = guestSessionId)
+                Log.d("CineverseDataStore", "Guest session created successfully")
+            } else if (guestSessionResponse is Result.Error) {
+                Log.e("LoginViewModel", "Failed to create guest session: ${guestSessionResponse.message}")
             }
         }
     }
 
     fun onShowResetPSBottomSheet() {
         _authUiState.update {
-            it.copy(
-                showResetPSBottomSheet = true
-            )
+            it.copy(showResetPSBottomSheet = true)
         }
     }
 
     fun onShowSignUpBottomSheet() {
         _authUiState.update {
-            it.copy(
-                showSignUpBottomSheet = true
-            )
+            it.copy(showSignUpBottomSheet = true)
         }
     }
 
@@ -165,18 +160,13 @@ class LoginViewModel @Inject constructor(
 
     fun onUsernameChanged(username: String) {
         _authUiState.update {
-            it.copy(
-                username = username
-            )
+            it.copy(username = username)
         }
     }
 
     fun onPasswordChanged(password: String) {
         _authUiState.update {
-            it.copy(
-                password = password
-            )
+            it.copy(password = password)
         }
-
     }
 }

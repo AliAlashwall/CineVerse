@@ -5,5 +5,7 @@ data class ProfileUiState(
     val userName: String? = null,
     val name: String? = null,
     val gravatar: String = "",
-    val avatarPath: String? = null
+    val avatarPath: String? = null,
+    val isLoading: Boolean = false,
+    val error: String? = null
 )

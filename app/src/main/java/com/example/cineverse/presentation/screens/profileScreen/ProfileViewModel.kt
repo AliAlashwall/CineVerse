@@ -1,5 +1,6 @@
 package com.example.cineverse.presentation.screens.profileScreen
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cineverse.data.local.dataStore.AuthStorage
@@ -22,7 +23,6 @@ class ProfileViewModel @Inject constructor(
     private val _profileUiState = MutableStateFlow(ProfileUiState())
     val profileUiState = _profileUiState.asStateFlow()
 
-
     init {
         getAccountData()
     }
@@ -30,23 +30,39 @@ class ProfileViewModel @Inject constructor(
     fun getAccountData() {
         viewModelScope.launch {
             _profileUiState.update {
-                it.copy(
-                    sessionId = authStorage.getSessionId() ?: ""
-                )
+                it.copy(sessionId = authStorage.getSessionId() ?: "")
             }
 
             val accountResponse = accountRepository.getAccountDetails(
                 client = client,
                 sessionId = _profileUiState.value.sessionId
             )
-            if (accountResponse is Result.Success) {
-                _profileUiState.update {
-                    it.copy(
-                        userName = accountResponse.data.username,
-                        name = accountResponse.data.name,
-                        gravatar = accountResponse.data.avatar.gravatar.hash,
-                        avatarPath = accountResponse.data.avatar.tmdb.avatarPath
-                    )
+            
+            when (accountResponse) {
+                is Result.Success -> {
+                    _profileUiState.update {
+                        it.copy(
+                            userName = accountResponse.data.username,
+                            name = accountResponse.data.name,
+                            gravatar = accountResponse.data.avatar.gravatar.hash,
+                            avatarPath = accountResponse.data.avatar.tmdb.avatarPath,
+                            isLoading = false,
+                            error = null
+                        )
+                    }
+                    Log.d("ProfileViewModel", "Account data loaded successfully")
+                }
+                is Result.Error -> {
+                    Log.e("ProfileViewModel", "Failed to load account: ${accountResponse.message}")
+                    _profileUiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = accountResponse.message
+                        )
+                    }
+                }
+                else -> {
+                    _profileUiState.update { it.copy(isLoading = false) }
                 }
             }
         }

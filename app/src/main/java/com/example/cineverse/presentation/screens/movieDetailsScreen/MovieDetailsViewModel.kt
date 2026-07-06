@@ -27,36 +27,65 @@ class MovieDetailsViewModel @Inject constructor(
         getPopularMovies()
     }
 
-    fun getMovieDetails(moveId: Int) {
+    fun getMovieDetails(movieId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val movieDetails =
-                    moviesRepository.getMovieDetails(movieId = moveId, client = client)
-                Log.d("MovieDetailsViewModel", "Movie details: $movieDetails")
-                if (movieDetails is Result.Success) {
-                    _movieUiState.update { it.copy(movieDetails = movieDetails.data) }
-                    Log.d("MovieDetailsViewModel", "Movie details: ${movieDetails.data}")
+            _movieUiState.update { it.copy(isLoadingDetails = true, detailsError = null) }
+            
+            val movieDetails = moviesRepository.getMovieDetails(movieId = movieId, client = client)
+            
+            when (movieDetails) {
+                is Result.Success -> {
+                    _movieUiState.update { 
+                        it.copy(
+                            movieDetails = movieDetails.data,
+                            isLoadingDetails = false
+                        ) 
+                    }
+                    Log.d("MovieDetailsViewModel", "Movie details loaded successfully for movie ID: $movieId")
                 }
-
-            } catch (e: Exception) {
-                Log.e("MovieDetailsViewModel", "Error fetching movie details", e)
+                is Result.Error -> {
+                    _movieUiState.update { 
+                        it.copy(
+                            isLoadingDetails = false,
+                            detailsError = movieDetails.message
+                        ) 
+                    }
+                    Log.e("MovieDetailsViewModel", "Failed to fetch movie details: ${movieDetails.message}")
+                }
+                else -> {
+                    _movieUiState.update { it.copy(isLoadingDetails = false) }
+                }
             }
-
         }
     }
 
     fun getPopularMovies() {
         viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val movies = moviesRepository.getPopularMovies(client)
+            _movieUiState.update { it.copy(isLoading = true, error = null) }
 
-                if (movies is Result.Success) {
-                    _movieUiState.update { it.copy(popularMovies = movies.data.resultedMovies) }
+            when (val movies = moviesRepository.getPopularMovies(client)) {
+                is Result.Success -> {
+                    _movieUiState.update { 
+                        it.copy(
+                            popularMovies = movies.data.resultedMovies,
+                            isLoading = false
+                        ) 
+                    }
+                    Log.d("MovieDetailsViewModel", "Popular movies loaded successfully")
                 }
-            } catch (e: Exception) {
-                Log.e("MovieDetailsViewModel", "Error fetching popular movies", e)
+                is Result.Error -> {
+                    _movieUiState.update { 
+                        it.copy(
+                            isLoading = false,
+                            error = movies.message
+                        ) 
+                    }
+                    Log.e("MovieDetailsViewModel", "Failed to fetch popular movies: ${movies.message}")
+                }
+                else -> {
+                    _movieUiState.update { it.copy(isLoading = false) }
+                }
             }
-
         }
     }
 }
