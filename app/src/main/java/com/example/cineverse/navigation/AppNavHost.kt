@@ -29,14 +29,10 @@ import com.example.cineverse.presentation.screens.profileScreen.ProfileViewModel
 fun AppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    loginViewModel: LoginViewModel,
-    homeViewModel: HomeViewModel,
-    cineVerseViewModel: CineVerseViewModel,
-    profileViewModel: ProfileViewModel
+    navActions: NavActions,
+    cineVerseViewModel: CineVerseViewModel
 ) {
     val isOnBoardingCompleted by cineVerseViewModel.isOnBoardingCompleted.collectAsStateWithLifecycle()
-    val authUiState by loginViewModel.authUiState.collectAsStateWithLifecycle()
-    val isLoggedIn = authUiState.isLoggedIn
     val isDarkStored by cineVerseViewModel.isDarkTheme.collectAsStateWithLifecycle()
     
     // Consistently fall back to system theme if no preference is stored/loaded yet
@@ -45,7 +41,7 @@ fun AppNavHost(
 
     val startDestination = when {
         isOnBoardingCompleted == false -> OnBoardingRoute
-        isLoggedIn == false -> LoginRoute
+        // We don't have a LoginViewModel here; login state checked inside Login destination
         else -> HomeRoute
     }
     NavHost(
@@ -58,22 +54,27 @@ fun AppNavHost(
             OnBoardingScreen(
                 onGetStartedClicked = {
                     cineVerseViewModel.setOnBoardingCompleted()
-                    navController.navigate(LoginRoute)
+                    navActions.navigateToLogin()
                 }
             )
         }
 
-        composable<LoginRoute> {
+        composable<LoginRoute> { backStackEntry ->
+            val loginViewModel: LoginViewModel = hiltViewModel(backStackEntry)
             LoginScreen(
                 loginViewModel = loginViewModel,
-                navController = navController
-
+                navActions = navActions
             )
         }
 
-        composable<HomeRoute> {
+        composable<HomeRoute> { backStackEntry ->
+            val homeViewModel: HomeViewModel = hiltViewModel(backStackEntry)
 
-            HomeScreen(navController = navController, homeViewModel = homeViewModel)
+            HomeScreen(
+                homeViewModel = homeViewModel,
+                onMovieClicked = { movie -> navActions.openMovieDetails(movie.id) },
+                onHeaderClicked = { navActions.navigateToProfile() }
+            )
         }
 
         composable<ExploreRoute> {
@@ -82,7 +83,8 @@ fun AppNavHost(
         composable<MatchRoute> {
             MatchScreen()
         }
-        composable<ProfileRoute> {
+        composable<ProfileRoute> { backStackEntry ->
+            val profileViewModel: ProfileViewModel = hiltViewModel(backStackEntry)
             ProfileScreen(
                 profileViewModel = profileViewModel,
                 isDark = isDark,
@@ -96,13 +98,13 @@ fun AppNavHost(
         }
 
         composable<MovieDetailsRoute> { backStackEntry ->
-            val movieDetailsViewModel: MovieDetailsViewModel = hiltViewModel()
+            val movieDetailsViewModel: MovieDetailsViewModel = hiltViewModel(backStackEntry)
 
             val arg = backStackEntry.toRoute<MovieDetailsRoute>()
             MovieDetailsScreen(
                 movieDetailsViewModel = movieDetailsViewModel,
                 movieId = arg.movieId,
-                navController = navController
+                navActions = navActions
             )
         }
 
