@@ -1,5 +1,6 @@
 package com.example.cineverse.domain.repository
 
+import com.example.cineverse.domain.model.GenresList
 import com.example.cineverse.domain.model.MovieDetails
 import com.example.cineverse.domain.model.NowPlayingMovies
 import com.example.cineverse.domain.model.PopularMovies
@@ -18,5 +19,7 @@ interface MoviesRepository {
     suspend fun getPopularMovies(client: HttpClient): Result<PopularMovies>
 
     suspend fun getMovieDetails(movieId: Int, client: HttpClient): Result<MovieDetails>
+
+    suspend fun getGenreList(client: HttpClient): Result<GenresList>
 
 }

@@ -1,6 +1,7 @@
 package com.example.cineverse.data.remote.mapper
 
 import com.example.cineverse.data.remote.dto.DatesDto
+import com.example.cineverse.data.remote.dto.GenresListDTO
 import com.example.cineverse.data.remote.dto.ResultedMovieDto
 import com.example.cineverse.data.remote.dto.movieDetails.BelongsToCollectionDTO
 import com.example.cineverse.data.remote.dto.movieDetails.CastDTO
@@ -20,6 +21,7 @@ import com.example.cineverse.domain.model.Cast
 import com.example.cineverse.domain.model.Credits
 import com.example.cineverse.domain.model.Crew
 import com.example.cineverse.domain.model.Genre
+import com.example.cineverse.domain.model.GenresList
 import com.example.cineverse.domain.model.Movie
 import com.example.cineverse.domain.model.MovieDates
 import com.example.cineverse.domain.model.MovieDetails
@@ -159,6 +161,13 @@ fun GenreDTO.toDomain(): Genre {
     return Genre(
         id = this.id,
         name = this.name
+    )
+}
+
+fun GenresListDTO.toDomain(): GenresList {
+    val genres = this.genres.map { it.toDomain() }
+    return GenresList(
+        genres = genres
     )
 }
 

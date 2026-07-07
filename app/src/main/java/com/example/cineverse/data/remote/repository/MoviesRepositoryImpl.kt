@@ -1,6 +1,7 @@
 package com.example.cineverse.data.remote.repository
 
 import android.util.Log
+import com.example.cineverse.data.remote.dto.GenresListDTO
 import com.example.cineverse.data.remote.dto.movieDetails.MovieDetailsDTO
 import com.example.cineverse.data.remote.dto.nowPlayingDto.NowPlayingMoviesDTO
 import com.example.cineverse.data.remote.dto.popular.PopularMoviesDTO
@@ -8,6 +9,7 @@ import com.example.cineverse.data.remote.dto.topRated.TopRatedMoviesDto
 import com.example.cineverse.data.remote.dto.upComingDto.UpComingResponseDTO
 import com.example.cineverse.data.remote.mapper.toDomain
 import com.example.cineverse.data.remote.util.HttpErrorHandler
+import com.example.cineverse.domain.model.GenresList
 import com.example.cineverse.domain.model.MovieDetails
 import com.example.cineverse.domain.model.NowPlayingMovies
 import com.example.cineverse.domain.model.PopularMovies
@@ -72,5 +74,17 @@ class MoviesRepositoryImpl @Inject constructor() : MoviesRepository {
         } catch (e: Exception) {
             HttpErrorHandler.handleException(e, "Failed to fetch movie details")
         }
+    }
+
+    override suspend fun getGenreList(client: HttpClient): Result<GenresList> {
+        return try {
+            val listOfGenres = client.get("genre/movie/list").body<GenresListDTO>()
+            Log.d("MoviesRepositoryImpl", "Fetched genre list successfully")
+            Result.Success(data = listOfGenres.toDomain())
+        }catch (e: Exception) {
+            HttpErrorHandler.handleException(e, "Failed to fetch genre list")
+
+        }
+
     }
 }
