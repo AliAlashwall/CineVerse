@@ -230,4 +230,7 @@
     <string name="forward_arrow" tools:ignore="MissingTranslation">next\n</string>
     <string name="play_movie" translatable="false">play</string>
     <string name="user_image" translatable="false">user image</string>
+    <string name="grid_view" translatable="false">Grid View</string>
+    <string name="list_view" translatable="false">List View</string>
+    <string name="series" translatable="false">Series</string>
 </resources>
