@@ -86,7 +86,9 @@ fun AppNavHost(
         }
 
         composable<ExploreRoute> {
-            ExploreScreen()
+            ExploreScreen(
+                onMovieClicked = { movieId -> navController.navigate(MovieDetailsRoute(movieId)) }
+            )
         }
         composable<MatchRoute> {
             MatchScreen()

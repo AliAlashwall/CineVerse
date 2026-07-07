@@ -24,7 +24,8 @@ import javax.inject.Inject
 sealed class HomeEvent {
     object Loading : HomeEvent()
     object Success : HomeEvent()
-    data class Error(val errorMessage: String, val errorType: ErrorType = ErrorType.UNKNOWN) : HomeEvent()
+    data class Error(val errorMessage: String, val errorType: ErrorType = ErrorType.UNKNOWN) :
+        HomeEvent()
 }
 
 enum class ErrorType {
@@ -84,10 +85,11 @@ class HomeViewModel @Inject constructor(
                     }
 
                     // Check if all requests succeeded
-                    if (upcomingResult is Result.Success && 
-                        topRatedResult is Result.Success && 
-                        popularResult is Result.Success && 
-                        nowPlayingResult is Result.Success) {
+                    if (upcomingResult is Result.Success &&
+                        topRatedResult is Result.Success &&
+                        popularResult is Result.Success &&
+                        nowPlayingResult is Result.Success
+                    ) {
                         _homeEvent.value = HomeEvent.Success
                     } else {
                         // Get the first error encountered
@@ -106,7 +108,8 @@ class HomeViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 Log.e("HomeViewModel", "Error loading movies", e)
-                _homeEvent.value = HomeEvent.Error("An unexpected error occurred. Please try again.")
+                _homeEvent.value =
+                    HomeEvent.Error("An unexpected error occurred. Please try again.")
             }
         }
     }
@@ -116,15 +119,19 @@ class HomeViewModel @Inject constructor(
             is Result.Error.NetworkError -> {
                 HomeEvent.Error(error.message, ErrorType.NETWORK)
             }
+
             is Result.Error.TimeoutError -> {
                 HomeEvent.Error(error.message, ErrorType.TIMEOUT)
             }
+
             is Result.Error.ServerError -> {
                 HomeEvent.Error(error.message, ErrorType.SERVER)
             }
+
             is Result.Error.ParsingError -> {
                 HomeEvent.Error(error.message, ErrorType.PARSING)
             }
+
             is Result.Error.UnknownError -> {
                 HomeEvent.Error(error.message, ErrorType.UNKNOWN)
             }
