@@ -27,7 +27,9 @@ class MoviesRepositoryImpl @Inject constructor() : MoviesRepository {
 
     override suspend fun getUpComingMovies(client: HttpClient): Result<UpComingMovies> {
         return try {
-            val upComingMovies = client.get("movie/upcoming").body<UpComingResponseDTO>()
+            val upComingMovies = client.get("movie/upcoming") {
+                parameter("page", 5)
+            }.body<UpComingResponseDTO>()
             Result.Success(data = upComingMovies.toDomain())
         } catch (e: Exception) {
             HttpErrorHandler.handleException(e, "Failed to fetch upcoming movies")
@@ -69,7 +71,10 @@ class MoviesRepositoryImpl @Inject constructor() : MoviesRepository {
             val movieDetails = client.get("movie/$movieId") {
                 parameter("append_to_response", "credits,reviews")
             }.body<MovieDetailsDTO>()
-            Log.d("MoviesRepositoryImpl", "Fetched movie details successfully for movie ID: $movieId")
+            Log.d(
+                "MoviesRepositoryImpl",
+                "Fetched movie details successfully for movie ID: $movieId"
+            )
             Result.Success(data = movieDetails.toDomain())
         } catch (e: Exception) {
             HttpErrorHandler.handleException(e, "Failed to fetch movie details")
@@ -81,10 +86,25 @@ class MoviesRepositoryImpl @Inject constructor() : MoviesRepository {
             val listOfGenres = client.get("genre/movie/list").body<GenresListDTO>()
             Log.d("MoviesRepositoryImpl", "Fetched genre list successfully")
             Result.Success(data = listOfGenres.toDomain())
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             HttpErrorHandler.handleException(e, "Failed to fetch genre list")
 
         }
 
+    }
+
+    override suspend fun searchForMoviesByName(
+        client: HttpClient,
+        query: String
+    ): Result<TopRatedMovies> {
+        return try {
+            val response = client.get("search/movie") {
+                parameter("query", query)
+            }.body<TopRatedMoviesDto>()
+            Result.Success(response.toDomain())
+        } catch (e: Exception) {
+            Log.d("MoviesRepositoryImpl", "Error searching for movies by name: ${e.message}")
+            HttpErrorHandler.handleException(e, "Failed to search for movies by name")
+        }
     }
 }

@@ -22,4 +22,6 @@ interface MoviesRepository {
 
     suspend fun getGenreList(client: HttpClient): Result<GenresList>
 
+    suspend fun searchForMoviesByName(client: HttpClient, query: String): Result<TopRatedMovies>
+
 }

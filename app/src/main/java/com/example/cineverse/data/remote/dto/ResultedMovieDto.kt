@@ -9,7 +9,7 @@ data class ResultedMovieDto(
     @SerialName("adult")
     val adult: Boolean,
     @SerialName("backdrop_path")
-    val backdropPath: String,
+    val backdropPath: String?,
     @SerialName("genre_ids")
     val genreIds: List<Int>,
     @SerialName("id")
@@ -23,7 +23,7 @@ data class ResultedMovieDto(
     @SerialName("popularity")
     val popularity: Double,
     @SerialName("poster_path")
-    val posterPath: String,
+    val posterPath: String?,
     @SerialName("release_date")
     val releaseDate: String,
     @SerialName("softcore")

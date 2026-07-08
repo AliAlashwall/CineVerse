@@ -24,7 +24,7 @@ import com.example.cineverse.presentation.designSystem.theme.Theme
 @Composable
 fun HomeCarouselItem(
     modifier: Modifier = Modifier,
-    posterPath: String,
+    posterPath: String?,
     title: String,
     description: String,
     rate: String,

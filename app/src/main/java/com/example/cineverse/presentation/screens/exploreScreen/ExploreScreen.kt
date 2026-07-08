@@ -39,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.cineverse.R
 import com.example.cineverse.domain.model.Genre
 import com.example.cineverse.domain.model.Movie
+import com.example.cineverse.presentation.components.CineVerseLoading
 import com.example.cineverse.presentation.components.MovieCard
 import com.example.cineverse.presentation.components.MoviePoster
 import com.example.cineverse.presentation.components.RatingBadge
@@ -150,6 +151,12 @@ fun ExploreScreen(
                 .align(Alignment.BottomEnd)
                 .padding(bottom = 24.dp, end = 16.dp)
         )
+
+        if (uiState.isLoading){
+            CineVerseLoading()
+        }
+
+
     }
 }
 
