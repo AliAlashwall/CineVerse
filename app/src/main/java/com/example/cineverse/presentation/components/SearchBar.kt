@@ -1,10 +1,10 @@
 package com.example.cineverse.presentation.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -31,7 +32,7 @@ import com.example.cineverse.presentation.designSystem.theme.Theme
 fun SearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
 ) {
     Box(
         modifier = Modifier
@@ -44,9 +45,8 @@ fun SearchBar(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { onClick() }) {
+            modifier = Modifier.fillMaxSize()
+        ) {
             Icon(
                 painter = painterResource(id = R.drawable.outline_search),
                 contentDescription = stringResource(R.string.search_icon),
@@ -57,7 +57,10 @@ fun SearchBar(
             BasicTextField(
                 value = query,
                 onValueChange = onQueryChange,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f)
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) { onClick() }
+                    },
                 textStyle = Theme.textStyle.bodyMdRegular.copy(color = Theme.colors.shadePrimary),
                 cursorBrush = SolidColor(Theme.colors.buttonPrimary),
                 decorationBox = { innerTextField ->
