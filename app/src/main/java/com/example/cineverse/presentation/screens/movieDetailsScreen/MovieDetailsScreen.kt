@@ -68,7 +68,7 @@ fun MovieDetailsScreen(
         dateCreated = movieUiState.movieDetails?.releaseDate.toString(),
         storyLineContent = movieUiState.movieDetails?.overview ?: "",
         castList = movieUiState.movieDetails?.credits?.cast ?: emptyList(),
-        moviesList = movieUiState.popularMovies,
+        moviesList = movieUiState.topRatedMovies,
         onMovieClicked = { movie ->
             openMovieDetailsById(movie.id)
         },

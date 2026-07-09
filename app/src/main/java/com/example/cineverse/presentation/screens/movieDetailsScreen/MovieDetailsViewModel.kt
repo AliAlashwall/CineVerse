@@ -24,7 +24,7 @@ class MovieDetailsViewModel @Inject constructor(
     val movieUiState = _movieUiState.asStateFlow()
 
     init {
-        getPopularMovies()
+        getTopRatedMovies()
     }
 
     fun getMovieDetails(movieId: Int) {
@@ -59,19 +59,19 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    fun getPopularMovies() {
+    fun getTopRatedMovies() {
         viewModelScope.launch(Dispatchers.IO) {
             _movieUiState.update { it.copy(isLoading = true, error = null) }
 
-            when (val movies = moviesRepository.getPopularMovies(client)) {
+            when (val movies = moviesRepository.getTopRatedMovies(client)) {
                 is Result.Success -> {
                     _movieUiState.update { 
                         it.copy(
-                            popularMovies = movies.data.resultedMovies,
+                            topRatedMovies = movies.data.resultedMovies,
                             isLoading = false
                         ) 
                     }
-                    Log.d("MovieDetailsViewModel", "Popular movies loaded successfully")
+                    Log.d("MovieDetailsViewModel", "TopRated movies loaded successfully")
                 }
                 is Result.Error -> {
                     _movieUiState.update { 
@@ -80,7 +80,7 @@ class MovieDetailsViewModel @Inject constructor(
                             error = movies.message
                         ) 
                     }
-                    Log.e("MovieDetailsViewModel", "Failed to fetch popular movies: ${movies.message}")
+                    Log.e("MovieDetailsViewModel", "Failed to fetch TopRated movies: ${movies.message}")
                 }
                 else -> {
                     _movieUiState.update { it.copy(isLoading = false) }
