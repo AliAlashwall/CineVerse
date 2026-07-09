@@ -9,7 +9,6 @@ data class ExploreUiState(
     val selectedGenreId: Int? = 0,
     val viewMode: ViewMode = ViewMode.GRID,
     val movies: List<Movie> = emptyList(),
-    val filteredMovies: List<Movie> = emptyList(),
     val searchedMovies: List<Movie> = emptyList(),
     val genres: List<Genre> = emptyList(),
     val isLoading: Boolean = false,

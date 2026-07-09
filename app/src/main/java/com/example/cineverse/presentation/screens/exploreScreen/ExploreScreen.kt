@@ -20,13 +20,19 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +42,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.cineverse.R
 import com.example.cineverse.domain.model.Genre
 import com.example.cineverse.domain.model.Movie
@@ -54,9 +63,14 @@ import com.example.cineverse.presentation.screens.exploreScreen.components.ViewM
 fun ExploreScreen(
     modifier: Modifier = Modifier,
     viewModel: ExploreViewModel = hiltViewModel(),
-    onMovieClicked: (Int) -> Unit
+    onMovieClicked: (Int) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var enable by rememberSaveable { mutableStateOf(false) }
+
+    val lazyPagingItems =
+        if (enable) viewModel.searchedMovies.collectAsLazyPagingItems()
+        else viewModel.popularMovies.collectAsLazyPagingItems()
 
     Box(
         modifier = modifier
@@ -73,7 +87,10 @@ fun ExploreScreen(
             // Search Bar
             SearchBar(
                 query = uiState.searchQuery,
-                onQueryChange = viewModel::onSearchQueryChange
+                onQueryChange = viewModel::onSearchQueryChange,
+                onClick = { enable = true },
+                showBackArrow = enable,
+                onBackClicked = { enable = false }
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -111,36 +128,18 @@ fun ExploreScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Content
-            if (uiState.viewMode == ViewMode.GRID) {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = 80.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(uiState.filteredMovies) { movie ->
-                        MovieCard(
-                            movie = movie,
-                            modifier = Modifier.fillMaxWidth(),
-                            onMovieClicked = { onMovieClicked(movie.id) }
-                        )
-                    }
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = 80.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(uiState.filteredMovies) { movie ->
-                        MovieListItem(
-                            movie = movie,
-                            onMovieClicked = { onMovieClicked(movie.id) }
-                        )
-                    }
-                }
-            }
+            ExploreContent(
+                viewMode = uiState.viewMode,
+                lazyPagingItems = lazyPagingItems,
+                onMovieClicked = { onMovieClicked(it) },
+                getMovieGenres = { viewModel.getMovieGenres(it) },
+            )
+        }
+
+
+
+        if (uiState.isLoading) {
+            CineVerseLoading()
         }
 
         // View Mode Toggle Button
@@ -151,21 +150,180 @@ fun ExploreScreen(
                 .align(Alignment.BottomEnd)
                 .padding(bottom = 24.dp, end = 16.dp)
         )
-
-        if (uiState.isLoading){
-            CineVerseLoading()
-        }
-
-
     }
 }
 
 
 @Composable
+fun ExploreContent(
+    viewMode: ViewMode,
+    lazyPagingItems: LazyPagingItems<Movie>,
+    onMovieClicked: (Int) -> Unit,
+    getMovieGenres: (Movie) -> String
+) {
+    when (val refreshState = lazyPagingItems.loadState.refresh) {
+        is LoadState.Loading -> {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        }
+
+        is LoadState.Error -> {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("Something went wrong: ${refreshState.error.localizedMessage}")
+                    Button(onClick = { lazyPagingItems.retry() }) {
+                        Text("Retry")
+                    }
+                }
+            }
+        }
+
+        else -> {
+            if (viewMode == ViewMode.GRID) {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 80.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(
+                        count = lazyPagingItems.itemCount,
+
+                        key = { index ->
+                            val movie = lazyPagingItems.peek(index)
+                            movie?.let { "${it.id}_$index" } ?: index
+                        },
+                    ) { index ->
+                        val movie = lazyPagingItems[index]
+                        if (movie != null) {
+                            MovieCard(
+                                movie = movie,
+                                modifier = Modifier.fillMaxWidth(),
+                                onMovieClicked = { onMovieClicked(movie.id) }
+                            )
+                        } else {
+                            LoadingMovieCard()
+                        }
+                    }
+                    when (lazyPagingItems.loadState.append) {
+                        is LoadState.Loading -> {
+                            item {
+                                Box(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
+                                }
+                            }
+                        }
+
+                        is LoadState.Error -> {
+                            item {
+                                Row(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Text("Failed to load more")
+                                    TextButton(onClick = { lazyPagingItems.retry() }) {
+                                        Text("Retry")
+                                    }
+                                }
+                            }
+                        }
+
+                        else -> {}
+                    }
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 80.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    items(
+                        count = lazyPagingItems.itemCount,
+
+                        key = { index ->
+                            val movie = lazyPagingItems.peek(index)
+                            movie?.let { "${it.id}_$index" } ?: index
+                        },
+                    ) { index ->
+                        val movie = lazyPagingItems[index]
+                        if (movie != null) {
+                            MovieListItem(
+                                movie = movie,
+                                onMovieClicked = { onMovieClicked(movie.id) },
+                                getGenres = { getMovieGenres(movie) }
+                            )
+                        } else {
+                            LoadingMovieCard()
+                        }
+                    }
+
+                    when (lazyPagingItems.loadState.append) {
+                        is LoadState.Loading -> {
+                            item {
+                                Box(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
+                                }
+                            }
+                        }
+
+                        is LoadState.Error -> {
+                            item {
+                                Row(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    Text("Failed to load more")
+                                    TextButton(onClick = { lazyPagingItems.retry() }) {
+                                        Text("Retry")
+                                    }
+                                }
+                            }
+                        }
+
+                        else -> {}
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun LoadingMovieCard() {
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text("Loading...")
+    }
+}
+
+@Composable
 fun MovieListItem(
     movie: Movie,
-    onMovieClicked: (Int) -> Unit
+    onMovieClicked: (Int) -> Unit,
+    getGenres: (Movie) -> String
 ) {
+    val movieGenres = remember { getGenres(movie) }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -208,7 +366,7 @@ fun MovieListItem(
             }
 
             Text(
-                text = "Drama, Action, Crime, Thriller", // This should come from movie genres
+                text = movieGenres,
                 style = Theme.textStyle.bodySmRegular,
                 color = Theme.colors.shadeTertiary,
                 maxLines = 1,
@@ -256,6 +414,8 @@ fun MovieListItem(
 @Composable
 private fun ExploreScreenPreview() {
     CineVerseTheme {
-        ExploreScreen {}
+        ExploreScreen(
+            onMovieClicked = {}
+        )
     }
 }

@@ -1,6 +1,9 @@
 package com.example.cineverse.data.remote.repository
 
 import android.util.Log
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.example.cineverse.data.remote.dto.GenresListDTO
 import com.example.cineverse.data.remote.dto.movieDetails.MovieDetailsDTO
 import com.example.cineverse.data.remote.dto.nowPlayingDto.NowPlayingMoviesDTO
@@ -10,17 +13,19 @@ import com.example.cineverse.data.remote.dto.upComingDto.UpComingResponseDTO
 import com.example.cineverse.data.remote.mapper.toDomain
 import com.example.cineverse.data.remote.util.HttpErrorHandler
 import com.example.cineverse.domain.model.GenresList
+import com.example.cineverse.domain.model.Movie
 import com.example.cineverse.domain.model.MovieDetails
 import com.example.cineverse.domain.model.NowPlayingMovies
-import com.example.cineverse.domain.model.PopularMovies
 import com.example.cineverse.domain.model.TopRatedMovies
 import com.example.cineverse.domain.model.UpComingMovies
 import com.example.cineverse.domain.repository.MoviesRepository
 import com.example.cineverse.domain.util.Result
+import com.example.cineverse.presentation.paging.BasePagingSource
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class MoviesRepositoryImpl @Inject constructor() : MoviesRepository {
@@ -54,13 +59,23 @@ class MoviesRepositoryImpl @Inject constructor() : MoviesRepository {
         }
     }
 
-    override suspend fun getPopularMovies(client: HttpClient): Result<PopularMovies> {
-        return try {
-            val popularMovies = client.get("movie/popular").body<PopularMoviesDTO>()
-            Result.Success(data = popularMovies.toDomain())
-        } catch (e: Exception) {
-            HttpErrorHandler.handleException(e, "Failed to fetch popular movies")
-        }
+    override fun getPopularMovies(
+        client: HttpClient
+    ): Flow<PagingData<Movie>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 20,
+                prefetchDistance = 5,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                BasePagingSource { page ->
+                    client.get("movie/popular") {
+                        parameter("page", page)
+                    }.body<PopularMoviesDTO>().toDomain().resultedMovies
+                }
+            }
+        ).flow
     }
 
     override suspend fun getMovieDetails(
@@ -95,16 +110,23 @@ class MoviesRepositoryImpl @Inject constructor() : MoviesRepository {
 
     override suspend fun searchForMoviesByName(
         client: HttpClient,
-        query: String
-    ): Result<TopRatedMovies> {
-        return try {
-            val response = client.get("search/movie") {
-                parameter("query", query)
-            }.body<TopRatedMoviesDto>()
-            Result.Success(response.toDomain())
-        } catch (e: Exception) {
-            Log.d("MoviesRepositoryImpl", "Error searching for movies by name: ${e.message}")
-            HttpErrorHandler.handleException(e, "Failed to search for movies by name")
-        }
+        query: String,
+    ): Flow<PagingData<Movie>> {
+
+        return Pager(
+            config = PagingConfig(
+                pageSize = 20,
+                prefetchDistance = 5,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                BasePagingSource { page ->
+                    client.get("search/movie") {
+                        parameter("query", query)
+                        parameter("page", page)
+                    }.body<TopRatedMoviesDto>().toDomain().resultedMovies
+                }
+            }
+        ).flow
     }
 }
