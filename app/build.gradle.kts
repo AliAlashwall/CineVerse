@@ -71,6 +71,10 @@ dependencies {
     implementation(libs.ktor.client.auth) // Auth plugin
     implementation(libs.androidx.security.crypto) // For secure token storage
 
+    //Paging
+    implementation(libs.androidx.paging.runtime.ktx)
+    implementation(libs.androidx.paging.compose)
+
 
     //Navigation
 //    implementation(libs.androidx.navigation.compose)
