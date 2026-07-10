@@ -3,10 +3,10 @@ package com.example.cineverse.presentation.screens.movieDetailsScreen
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.example.cineverse.domain.repository.MoviesRepository
 import com.example.cineverse.domain.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.client.HttpClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,22 +16,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
-    private val client: HttpClient,
     private val moviesRepository: MoviesRepository,
 ) : ViewModel() {
 
     private val _movieUiState = MutableStateFlow(MovieUiState())
     val movieUiState = _movieUiState.asStateFlow()
 
-    init {
-        getTopRatedMovies()
-    }
+    val topRatedMovies = moviesRepository.getTopRatedMovies().cachedIn(viewModelScope)
 
     fun getMovieDetails(movieId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _movieUiState.update { it.copy(isLoadingDetails = true, detailsError = null) }
             
-            val movieDetails = moviesRepository.getMovieDetails(movieId = movieId, client = client)
+            val movieDetails = moviesRepository.getMovieDetails(movieId = movieId)
             
             when (movieDetails) {
                 is Result.Success -> {
@@ -59,7 +56,7 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    fun getTopRatedMovies() {
+    /*fun getTopRatedMovies() {
         viewModelScope.launch(Dispatchers.IO) {
             _movieUiState.update { it.copy(isLoading = true, error = null) }
 
@@ -87,5 +84,5 @@ class MovieDetailsViewModel @Inject constructor(
                 }
             }
         }
-    }
+    }*/
 }

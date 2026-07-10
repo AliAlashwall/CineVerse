@@ -9,7 +9,6 @@ import com.example.cineverse.domain.model.Movie
 import com.example.cineverse.domain.repository.MoviesRepository
 import com.example.cineverse.domain.util.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.client.HttpClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -26,7 +25,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ExploreViewModel @Inject constructor(
-    private val client: HttpClient,
     private val moviesRepository: MoviesRepository
 ) : ViewModel() {
 
@@ -38,12 +36,12 @@ class ExploreViewModel @Inject constructor(
     }
 
 
-    val popularMovies = moviesRepository.getPopularMovies(client).cachedIn(viewModelScope)
+    val popularMovies = moviesRepository.getPopularMovies().cachedIn(viewModelScope)
 
 
     private fun getGenres() {
         viewModelScope.launch(Dispatchers.IO) {
-            val genres = moviesRepository.getGenreList(client)
+            val genres = moviesRepository.getGenreList()
             if (genres is Result.Success) {
                 _uiState.update {
                     it.copy(
@@ -69,7 +67,7 @@ class ExploreViewModel @Inject constructor(
         .debounce(500) // Wait for user to stop typing
         .distinctUntilChanged()
         .flatMapLatest { query ->
-           moviesRepository.searchForMoviesByName(client,query)
+           moviesRepository.searchForMoviesByName(query)
         }
         .cachedIn(viewModelScope) // Crucial for Paging
 
