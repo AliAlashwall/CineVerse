@@ -4,27 +4,23 @@ import androidx.paging.PagingData
 import com.example.cineverse.domain.model.GenresList
 import com.example.cineverse.domain.model.Movie
 import com.example.cineverse.domain.model.MovieDetails
-import com.example.cineverse.domain.model.NowPlayingMovies
-import com.example.cineverse.domain.model.TopRatedMovies
-import com.example.cineverse.domain.model.UpComingMovies
 import com.example.cineverse.domain.util.Result
-import io.ktor.client.HttpClient
 import kotlinx.coroutines.flow.Flow
 
 interface MoviesRepository {
-    suspend fun getUpComingMovies(client: HttpClient): Result<UpComingMovies>
+     fun getUpComingMovies(): Flow<PagingData<Movie>>
 
-    suspend fun getTopRatedMovies(client: HttpClient): Result<TopRatedMovies>
+     fun getTopRatedMovies(): Flow<PagingData<Movie>>
 
-    suspend fun getNowPlayingMovies(client: HttpClient): Result<NowPlayingMovies>
+     fun getNowPlayingMovies(): Flow<PagingData<Movie>>
 
-    fun getPopularMovies(client: HttpClient): Flow<PagingData<Movie>>
+    fun getPopularMovies(): Flow<PagingData<Movie>>
 
-    suspend fun getMovieDetails(movieId: Int, client: HttpClient): Result<MovieDetails>
+    suspend fun getMovieDetails(movieId: Int): Result<MovieDetails>
 
-    suspend fun getGenreList(client: HttpClient): Result<GenresList>
+    suspend fun getGenreList(): Result<GenresList>
 
-    suspend fun searchForMoviesByName(client: HttpClient, query: String): Flow<PagingData<Movie>>
+    suspend fun searchForMoviesByName(query: String): Flow<PagingData<Movie>>
 
 
 }

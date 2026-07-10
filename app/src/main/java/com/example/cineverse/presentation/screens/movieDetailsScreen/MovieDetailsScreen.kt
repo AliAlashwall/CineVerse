@@ -23,6 +23,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.cineverse.R
 import com.example.cineverse.domain.model.Cast
 import com.example.cineverse.domain.model.Movie
@@ -37,6 +40,7 @@ import com.example.cineverse.presentation.screens.movieDetailsScreen.components.
 import com.example.cineverse.presentation.screens.movieDetailsScreen.components.StarCastSection
 import com.example.cineverse.presentation.screens.movieDetailsScreen.components.StorylineSection
 import com.example.cineverse.util.toRuntimeFormat
+import kotlinx.coroutines.flow.flow
 
 
 @Composable
@@ -52,7 +56,7 @@ fun MovieDetailsScreen(
         movieDetailsViewModel.getMovieDetails(movieId)
     }
     val movieUiState by movieDetailsViewModel.movieUiState.collectAsStateWithLifecycle()
-
+    val lazyTopRatedPagingItems = movieDetailsViewModel.topRatedMovies.collectAsLazyPagingItems()
 
 
     MovieDetailsContainer(
@@ -68,7 +72,7 @@ fun MovieDetailsScreen(
         dateCreated = movieUiState.movieDetails?.releaseDate.toString(),
         storyLineContent = movieUiState.movieDetails?.overview ?: "",
         castList = movieUiState.movieDetails?.credits?.cast ?: emptyList(),
-        moviesList = movieUiState.topRatedMovies,
+        lazyTopRatedPagingItems = lazyTopRatedPagingItems,
         onMovieClicked = { movie ->
             openMovieDetailsById(movie.id)
         },
@@ -90,7 +94,7 @@ fun MovieDetailsContainer(
     onPlayClicked: () -> Unit,
     onAddClicked: () -> Unit,
     onMovieClicked: (Movie) -> Unit,
-    moviesList: List<Movie>,
+    lazyTopRatedPagingItems: LazyPagingItems<Movie>,
     reviewsList: List<Review>
 ) {
     LazyColumn(
@@ -153,7 +157,7 @@ fun MovieDetailsContainer(
         item {
             SuggestedSection(
                 title = stringResource(R.string.you_might_also_like),
-                moviesList = moviesList,
+                lazyPagingItems = lazyTopRatedPagingItems,
                 onMovieClicked = { onMovieClicked(it) },
             )
         }
@@ -171,6 +175,7 @@ fun MovieDetailsContainer(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL)
 @Composable
 private fun MovieDetailsPreview() {
+    val lazyPagingItems = flow<PagingData<Movie>> {}.collectAsLazyPagingItems()
     CineVerseTheme {
         MovieDetailsContainer(
             onBackClicked = { /* Handle back navigation */ },
@@ -184,7 +189,7 @@ private fun MovieDetailsPreview() {
             dateCreated = "2008, Jul 18",
             storyLineContent = "Batman raises the stakes in his war on crime. With the help of Lt. Jim Gordon and District Attorney Harvey Dent, Batman sets out to",
             castList = mockCastList,
-            moviesList = emptyList(),
+            lazyTopRatedPagingItems = lazyPagingItems,
             onMovieClicked = {},
             reviewsList = emptyList()
         )
