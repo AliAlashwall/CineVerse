@@ -6,11 +6,10 @@ CineVerse is a modern Android application designed for movie enthusiasts to expl
 
 - **Home Feed:** Explore trending, top-rated, and upcoming movies with beautiful carousels and categorized sections.
 - **Movie Details:** Get in-depth information about any movie, including overview, ratings, and reviews.
+- **Pagination:** Smoothly scroll through large lists of movies with Paging 3.
 - **Explore:** Search for your favorite movies and discover new ones.
 - **Personalized Experience:** Manage your profile and enjoy features tailored to your "vibe."
 - **Smooth Navigation:** Intuitive navigation between screens using Compose Navigation.
-- **Offline Support:** Powered by Room database for reliable data caching.
-- **Pagination:** Smoothly scroll through large lists of movies with Paging 3.
 
 - ## 📸 Screenshots
 <p align="center">
