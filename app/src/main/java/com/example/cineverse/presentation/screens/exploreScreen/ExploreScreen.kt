@@ -23,10 +23,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,6 +47,8 @@ import com.example.cineverse.R
 import com.example.cineverse.domain.model.Genre
 import com.example.cineverse.domain.model.Movie
 import com.example.cineverse.presentation.components.CineVerseLoading
+import com.example.cineverse.presentation.components.FailedToLoadMore
+import com.example.cineverse.presentation.components.LoadingMovieCard
 import com.example.cineverse.presentation.components.MovieCard
 import com.example.cineverse.presentation.components.MoviePoster
 import com.example.cineverse.presentation.components.RatingBadge
@@ -164,7 +164,7 @@ fun ExploreContent(
     when (val refreshState = lazyPagingItems.loadState.refresh) {
         is LoadState.Loading -> {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
+                CineVerseLoading()
             }
         }
 
@@ -190,7 +190,6 @@ fun ExploreContent(
                 ) {
                     items(
                         count = lazyPagingItems.itemCount,
-
                         key = { index ->
                             val movie = lazyPagingItems.peek(index)
                             movie?.let { "${it.id}_$index" } ?: index
@@ -216,24 +215,16 @@ fun ExploreContent(
                                         .padding(16.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    CircularProgressIndicator()
+                                    CineVerseLoading()
                                 }
                             }
                         }
 
                         is LoadState.Error -> {
                             item {
-                                Row(
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    Text("Failed to load more")
-                                    TextButton(onClick = { lazyPagingItems.retry() }) {
-                                        Text("Retry")
-                                    }
-                                }
+                                FailedToLoadMore(
+                                    onClick = { lazyPagingItems.retry() }
+                                )
                             }
                         }
 
@@ -275,24 +266,16 @@ fun ExploreContent(
                                         .padding(16.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    CircularProgressIndicator()
+                                    CineVerseLoading()
                                 }
                             }
                         }
 
                         is LoadState.Error -> {
                             item {
-                                Row(
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    Text("Failed to load more")
-                                    TextButton(onClick = { lazyPagingItems.retry() }) {
-                                        Text("Retry")
-                                    }
-                                }
+                                FailedToLoadMore(
+                                    onClick = { lazyPagingItems.retry() }
+                                )
                             }
                         }
 
@@ -305,17 +288,7 @@ fun ExploreContent(
 }
 
 
-@Composable
-fun LoadingMovieCard() {
-    Box(
-        Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text("Loading...")
-    }
-}
+
 
 @Composable
 fun MovieListItem(
