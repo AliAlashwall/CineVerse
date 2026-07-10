@@ -33,6 +33,7 @@ fun UserCard(
     userName: String,
     image: String
 ) {
+    val imageUrl = "https://image.tmdb.org/t/p/w500$image"
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -50,7 +51,7 @@ fun UserCard(
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(image)
+                    .data(imageUrl)
                     .crossfade(true)
                     .build(),
 
